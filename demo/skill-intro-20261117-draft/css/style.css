@@ -1,0 +1,72 @@
+/* ============================================================
+   トンマナ: なし（MasaoAI の 2026-11-17 の版の見た目をそのまま写した——materials/tonmana/ の写しではない）
+   元: ~/REPOS/MasaoAI/output/2026-11-13_theme-skills/slides.html の <style>
+   クラスの顔ぶれが MasaoAI のもの（.slide .text .fig .ch .key .src .cards …）なので、
+   materials/tonmana/ のトンマナを当てても効かない。見た目を替えるなら枚の HTML から作り直す。
+   ============================================================ */
+:root{--bg:#eef0f3;--card:#fff;--ink:#1d2330;--sub:#5b6475;--accent:#2a78d6;--warn:#d03b3b;--line:#dde1e7;--soft:#eaf2fc}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#2b2f36;color:var(--ink);font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Noto Sans CJK JP",sans-serif}
+
+/* ---- 送り（demo の標準）: 1 つの section が 1 枚。js/main.js が current を付けて拡大縮小する ---- */
+.deck{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+section.slide{display:none;flex:none;box-shadow:0 8px 40px rgba(0,0,0,.45);transform-origin:center center}
+section.slide.current{display:flex}
+section.slide.ig.current{display:block}
+
+/* ---- 枚の中身（MasaoAI のまま） ---- */
+.slide{width:1280px;height:720px;background:var(--card);position:relative;overflow:hidden}
+.text{flex:0 0 853px;padding:38px 40px 46px 56px;display:flex;flex-direction:column}
+.slide.full .text{flex:1 1 auto;padding-right:56px}
+.fig{flex:0 0 427px;background:#fff;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line)}
+.fig img{width:100%;height:720px;object-fit:contain;display:block;background:#fff}  /* 元は width:427px——欄の左の罫 1px のぶん、絵が枚の右へ 1px はみ出していたので、欄の幅いっぱい（426px）にした */
+.ch{color:var(--accent);font-weight:700;font-size:20px;letter-spacing:.05em}
+h1{font-size:72px;line-height:1.2;margin:.3em 0 .2em}
+h2{font-size:44px;line-height:1.25;margin:.2em 0 .4em;white-space:nowrap}
+h3{font-size:27px;color:var(--accent);margin:.4em 0 .15em}
+ul{padding-left:1.1em}
+li{font-size:27px;line-height:1.45;margin:.12em 0}
+.key{margin-top:auto;font-size:27px;font-weight:700;border-left:6px solid var(--accent);background:var(--soft);padding:.35em .6em;border-radius:4px}
+.src{position:absolute;left:56px;bottom:12px;color:var(--sub);font-size:15px}
+.cover{background:linear-gradient(135deg,#eaf2fc,#fff 60%)}
+.cover .text{justify-content:center;flex:1}
+.cover .sub{font-size:34px;color:var(--sub);margin-bottom:1em}
+.cover li{font-size:30px;margin:.3em 0}
+table{border-collapse:collapse;width:100%;margin:.3em 0 .6em}
+th,td{font-size:25px;line-height:1.4;padding:.55em .55em;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:#f4f6f8;border-bottom:2px solid #8a94a0;font-weight:700}
+td:first-child{font-weight:700}
+tr:nth-child(odd) td{background:#fafbfc}
+tr.hl td{background:#fff6d6!important}
+table.z td.n{text-align:right}
+.roomy li{font-size:30px;margin:.3em 0}.roomy h3{font-size:30px;margin:.8em 0 .2em}
+.half .text{flex:0 0 600px;padding-right:24px}
+.half .fig{flex:1 1 auto}
+.ig img{display:block;width:1280px;height:720px;object-fit:contain;background:#fff}
+.cards{display:flex;flex-direction:column;gap:22px;margin-top:20px}
+.card{display:flex;align-items:center;gap:22px;border:2px solid var(--line);border-radius:14px;padding:20px 26px;background:#fff}
+.card .num{flex:0 0 64px;height:64px;border-radius:50%;background:var(--accent);color:#fff;font-size:34px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.card .t{font-size:32px;font-weight:700;line-height:1.35}.card .t small{display:block;font-size:24px;font-weight:400;color:var(--sub)}
+
+/* ---- MasaoAI の slides.html で style="…" だった指定（demo の決めでクラスへ出した） ---- */
+h2.h37{font-size:37px}  /* 2 枚目。元は 40px——20 字 × 40px = 800px が文字の欄（757px）に入らず、右の絵を 42px 押し出して右端が切れていたので、入る大きさ（20 字 × 37px = 740px）に下げた */
+h2.h38{font-size:38px}
+h2.h36w{font-size:36px;white-space:normal}
+.key.s22{font-size:22px}
+col.w72{width:72%}col.w28{width:28%}
+/* 図（SVG）を images/ の 1 ファイルにして <img> で置く——元は HTML に直書きの 660px 幅の SVG */
+.half .fig img.diagram{width:660px;height:auto}
+/* 6 枚目の輪の図——元の style="width:100%;height:auto;max-height:640px;object-fit:contain" */
+.half .fig img.ring{width:100%;height:auto;max-height:640px;object-fit:contain}
+
+/* ---- ページ番号・送りのボタン（demo の雛形と同じ指定） ---- */
+.pageno{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);color:#9aa2ab;font-size:18px}
+.navbtn{position:fixed;bottom:16px;z-index:10;padding:10px 22px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#cfd6d3;font-size:16px;font-family:inherit;cursor:pointer}
+.navbtn:hover{background:rgba(255,255,255,.2)}
+#prevbtn{left:24px}
+#nextbtn{right:24px}
+#homebtn{top:8px;left:24px;bottom:auto;padding:3px 12px;font-size:13px}
+.zoombtn{top:8px;bottom:auto;padding:3px 0;width:34px;font-size:15px;line-height:1.2;text-align:center}
+#zoomoutbtn{right:66px}
+#zoominbtn{right:24px}

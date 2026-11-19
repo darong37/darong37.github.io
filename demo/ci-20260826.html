@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="publish-date" content="2026-08-26">
+<title>継続的統合</title>
+<meta name="robots" content="noindex">
+<meta name="published" content="2026-11-19 04:15:20">
+<meta charset="UTF-8">
+<style>
+  /* ---- 継続的統合 2026-08-26: 16:9 の紙芝居。1つの <section> が1枚 ---- */
+  :root {
+    --bg: #ffffff;
+    --fg: #17202b;
+    --accent: #0f62fe;
+    --warn: #b5401a;
+    --ok: #1f7a4d;
+    --muted: #5b6470;
+    --line: #d9dee4;
+    --soft: #f4f6f9;
+    --ink: #0d1117;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; background: #2b2f36; font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; }
+
+  .deck { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  section {
+    display: none;
+    flex: none;
+    width: 1280px; height: 720px;
+    background: var(--bg); color: var(--fg);
+    padding: 56px 72px;
+    flex-direction: column; justify-content: flex-start; gap: 24px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.45);
+    transform-origin: center center;
+    position: relative; overflow: hidden;
+  }
+  section.current { display: flex; }
+  /* 中身が少ない枚は縦中央へ寄せる（下に大きな余白を残さない） */
+  section.airy { justify-content: center; gap: 40px; }
+  section.airy:has(.chap) { padding-top: 74px; }
+
+  /* 行の割り方: 最後の行に1〜2文字だけ残る「泣き別れ」を防ぐ。
+     キャッチは <br> で意味の切れ目に自分で折る（自動の均し balance は掛けない——切れ目が意味と合わないため） */
+  h1, h2, h3 { text-wrap: balance; }
+  p, li, .muted, td, th { text-wrap: pretty; }
+
+  h1 { font-size: 54px; line-height: 1.25; letter-spacing: .01em; }
+  h2 { font-size: 38px; line-height: 1.3; border-left: 9px solid var(--accent); padding-left: 18px; }
+  p, li { font-size: 26px; line-height: 1.65; }
+  ul { padding-left: 1.15em; display: flex; flex-direction: column; gap: 8px; }
+  strong { color: var(--accent); }
+  .muted { color: var(--muted); font-size: 21px; line-height: 1.6; }
+
+  /* 章名の耳（左上） */
+  .chap {
+    position: absolute; top: 20px; left: 72px;
+    font-size: 17px; letter-spacing: .12em; color: var(--muted);
+  }
+  section:has(.chap) { padding-top: 74px; }
+
+  /* 表紙 */
+  section.cover { justify-content: center; gap: 18px; background: var(--ink); color: #f2f5f8; }
+  section.cover h1 { font-size: 68px; color: #fff; }
+  section.cover .muted { color: #9aa6b2; font-size: 26px; }
+  section.cover .rule { width: 120px; height: 5px; background: var(--accent); margin: 8px 0 4px; }
+
+  /* 章扉（黒地） */
+  section.divider {
+    background: var(--ink); color: #fff;
+    justify-content: center; align-items: flex-start; gap: 20px;
+  }
+  section.divider .num { font-size: 22px; letter-spacing: .2em; color: #7f8b98; }
+  section.divider h1 { font-size: 62px; color: #fff; }
+  section.divider .rule { width: 100px; height: 5px; background: var(--accent); }
+  section.divider .muted { color: #9aa6b2; }
+
+  /* 一言で言い切る枚（キャッチ） */
+  .catch {
+    font-size: 44px; line-height: 1.45; font-weight: 700;
+    border-left: 9px solid var(--accent); padding: 6px 0 6px 26px;
+  }
+  .catch.warn { border-left-color: var(--warn); }
+  .catch em { font-style: normal; color: var(--accent); }
+
+  /* 表 */
+  table { border-collapse: collapse; width: 100%; font-size: 22px; }
+  th, td { border: 1px solid var(--line); padding: 9px 14px; text-align: left; vertical-align: top; line-height: 1.5; }
+  th { background: var(--soft); font-weight: 700; }
+  td.k { width: 62px; text-align: center; color: var(--muted); font-weight: 700; }
+  table.small { font-size: 19px; }
+  table.small th, table.small td { padding: 7px 11px; }
+  table.tight { font-size: 17px; }
+  table.tight th, table.tight td { padding: 4px 10px; line-height: 1.4; }
+  table.xtight { font-size: 16px; }
+  table.xtight th, table.xtight td { padding: 2px 9px; line-height: 1.3; }
+  .hot { color: var(--warn); font-weight: 700; }
+  .good { color: var(--ok); font-weight: 700; }
+
+  /* 大きな数字 */
+  .nums { display: flex; gap: 28px; }
+  .nums > div {
+    flex: 1; border: 2px solid var(--line); border-radius: 12px;
+    padding: 20px 24px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .nums .n { font-size: 78px; line-height: 1; font-weight: 800; color: var(--accent); }
+  .nums .n.warn { color: var(--warn); }
+  .nums .lbl { font-size: 21px; color: var(--muted); }
+
+  /* 引用の吹き出し */
+  .quote {
+    background: var(--soft); border-left: 6px solid var(--muted);
+    padding: 14px 22px; font-size: 24px; line-height: 1.6; color: #3a4450;
+  }
+
+  /* 箱を横に並べる */
+  .boxes { display: flex; gap: 22px; }
+  .boxes > div {
+    flex: 1; border: 2px solid var(--line); border-radius: 12px; padding: 18px 22px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .boxes h3 { font-size: 26px; }
+  .boxes p { font-size: 21px; line-height: 1.55; }
+
+  /* 2段組み */
+  .cols { display: flex; gap: 36px; }
+  .cols > div { flex: 1; }
+
+  /* 図（インライン SVG） */
+  figure { display: flex; justify-content: center; }
+  svg { max-width: 100%; height: auto; }
+  figcaption { font-size: 20px; color: var(--muted); text-align: center; margin-top: 6px; }
+
+  img { max-width: 100%; height: auto; border-radius: 6px; }
+
+  /* ページ番号（中央下） */
+  .pageno {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    color: #9aa2ab; font-size: 18px;
+  }
+
+  /* 戻る/進むボタン（js/main.js が自動生成する標準装備） */
+  .navbtn {
+    position: fixed; bottom: 16px; z-index: 10;
+    padding: 10px 22px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.08); color: #cfd6d3;
+    font-size: 16px; font-family: inherit; cursor: pointer;
+  }
+  .navbtn:hover { background: rgba(255,255,255,.2); }
+  #prevbtn { left: 24px; }
+  #nextbtn { right: 24px; }
+
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="cover" data-speaker-notes="報告ではなく問題提起。最後に一緒に洗い出したいことがある。">
+  <h1>開発フローから<br>継続的統合へ</h1>
+  <div class="rule"></div>
+  <p class="muted">AI を使った開発で、いま何が問題で、どこに手を付けているか</p>
+  <p class="muted">2026-08-26</p>
+</section>
+
+<!-- 2 -->
+<section data-speaker-notes="今日は継続的統合の話。開発フローの話ではない。">
+  <h2>開発フローと、継続的統合</h2>
+  <div class="boxes" style="flex:1">
+    <div style="border-color:#5b6470">
+      <h3 style="font-size:30px">開発フローとは</h3>
+      <p style="font-size:24px"><strong>1つのプログラム</strong>を、設計から実装・検証まで<strong>作り切るための手順</strong>。</p>
+      <p style="font-size:22px">何をどの順にやるか、<br>どこで人が判断するかが決まっている</p>
+      <p class="good" style="font-size:23px;margin-top:auto">いま、ひととおり形になっている</p>
+    </div>
+    <div style="border-color:#0f62fe">
+      <h3 style="font-size:30px;color:#0f62fe">継続的統合とは</h3>
+      <p style="font-size:24px">作ったものを<strong>組み合わせて</strong>、1つのシステムとして<strong>保ち続けるための仕組み</strong>。</p>
+      <p style="font-size:22px">プログラムは十数個あり、互いに寄りかかっている。<strong>1つを直せば、寄りかかっている側に影響が出る</strong>——直すたびに整合を取り直す。その取り直しを続けることを「継続的」と言う。</p>
+      <p class="hot" style="font-size:23px;margin-top:auto">これからの話</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="divider">
+  <p class="num">第 1 章</p>
+  <h1>前提——いまのやり方</h1>
+  <div class="rule"></div>
+  <p class="muted">1つを作り切る手順と、そこから出てきた「課題」という単位</p>
+</section>
+
+<!-- 4 -->
+<section class="airy" data-speaker-notes="0番は毎回の前提確認なので別扱い。1番から10番までが作り切る本体。">
+  <p class="chap">第1章 前提</p>
+  <h2>開発フロー——0番から10番まで</h2>
+  <figure>
+  <svg viewBox="0 0 1120 200" role="img" aria-label="開発フローの段（0番から10番まで）">
+    <g font-family="Hiragino Sans, sans-serif" text-anchor="middle">
+      <rect x="0"   y="26" width="176" height="58" rx="9" fill="#f4f6f9" stroke="#5b6470" stroke-width="2" stroke-dasharray="7 5"/>
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="188" y="26" width="176" height="58" rx="9"/>
+        <rect x="376" y="26" width="176" height="58" rx="9"/>
+        <rect x="564" y="26" width="176" height="58" rx="9"/>
+        <rect x="752" y="26" width="176" height="58" rx="9"/>
+        <rect x="940" y="26" width="176" height="58" rx="9"/>
+        <rect x="0"   y="112" width="176" height="58" rx="9"/>
+        <rect x="188" y="112" width="176" height="58" rx="9"/>
+        <rect x="376" y="112" width="176" height="58" rx="9"/>
+        <rect x="564" y="112" width="176" height="58" rx="9"/>
+        <rect x="752" y="112" width="176" height="58" rx="9"/>
+      </g>
+      <g font-size="15" font-weight="700" fill="#5b6470">
+        <text x="88"   y="45">0</text><text x="276" y="45">1</text><text x="464" y="45">2</text>
+        <text x="652"  y="45">3</text><text x="840" y="45">4</text><text x="1028" y="45">5</text>
+        <text x="88"   y="131">6</text><text x="276" y="131">7</text><text x="464" y="131">8</text>
+        <text x="652"  y="131">9</text><text x="840" y="131">10</text>
+      </g>
+      <g font-size="19" fill="#17202b">
+        <text x="88"   y="72">環境確認</text><text x="276" y="72">要件分析</text><text x="464" y="72">要件定義</text>
+        <text x="652"  y="72">設計</text><text x="840" y="72">コンセプトレビュー</text><text x="1028" y="72">設計確定</text>
+        <text x="88"   y="158">ドキュメント作成</text><text x="276" y="158">実装</text><text x="464" y="158">実データ検証</text>
+        <text x="652"  y="158">実装レビュー</text><text x="840" y="158">内部設計書の作成</text>
+      </g>
+      <path d="M1050 90v10a6 6 0 0 1-6 6H74a6 6 0 0 0-6 6v4" stroke="#d9dee4" stroke-width="2" fill="none" marker-end="url(#arE)"/>
+      <defs><marker id="arE" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto">
+        <path d="M0 0l4.5 8L9 0z" fill="#d9dee4"/></marker></defs>
+      <text x="88" y="17" font-size="15" fill="#5b6470">別扱い</text>
+      <text x="560" y="192" font-size="19" fill="#5b6470">0番は毎回の前提確認なので別扱い。<tspan font-weight="700">1番から10番までが、1つを作り切る本体</tspan></text>
+    </g>
+  </svg>
+  </figure>
+  <p class="catch" style="font-size:34px">この手順で、<em>1つのプログラムを作り切れる</em></p>
+</section>
+
+<!-- 5 -->
+<section data-speaker-notes="まず定義。次に、そこへ至った経緯。思いつきではなく当然の帰結。">
+  <p class="chap">第1章 前提</p>
+  <h2>課題の導入</h2>
+  <p style="font-size:24px;font-weight:700">課題とは——3つの役目を1つに兼ねた単位</p>
+  <figure>
+  <svg viewBox="0 0 1120 128" role="img" aria-label="仕様書＋変更要求＋チケット＝課題">
+    <g font-family="Hiragino Sans, sans-serif" text-anchor="middle">
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="14"  y="14" width="190" height="80" rx="10"/>
+        <rect x="236" y="14" width="190" height="80" rx="10"/>
+        <rect x="458" y="14" width="190" height="80" rx="10"/>
+      </g>
+      <g font-size="26" fill="#17202b">
+        <text x="109" y="52">仕様書</text><text x="331" y="52">変更要求</text><text x="553" y="52">チケット</text>
+      </g>
+      <g font-size="18" fill="#5b6470">
+        <text x="109" y="80">何を作るか</text><text x="331" y="80">何を直すか</text><text x="553" y="80">いつ着手・いつ終了</text>
+      </g>
+      <g font-size="36" fill="#5b6470"><text x="220" y="66">＋</text><text x="442" y="66">＋</text><text x="686" y="66">＝</text></g>
+      <rect x="722" y="6" width="392" height="96" rx="12" fill="#eaf1ff" stroke="#0f62fe" stroke-width="4"/>
+      <text x="918" y="50" font-size="40" font-weight="700" fill="#0f62fe">課題</text>
+      <text x="918" y="84" font-size="19" fill="#0f62fe">番号が付く／台帳に残る／閉じて終わる</text>
+      <text x="560" y="122" font-size="21" fill="#17202b" font-weight="700">開発はすべてここから始まり、これが閉じることで終わる</text>
+    </g>
+  </svg>
+  </figure>
+  <p class="muted" style="border-top:2px solid #d9dee4;padding-top:14px;font-size:23px">では、なぜこれを作ったのか</p>
+  <figure>
+  <svg viewBox="0 0 1120 190" role="img" aria-label="仕様書だけで足りていた、から、置き場を作った、までの流れ">
+    <g font-family="Hiragino Sans, sans-serif">
+      <rect x="0" y="6" width="330" height="152" rx="12" fill="#f4f6f9" stroke="#d9dee4" stroke-width="2"/>
+      <text x="165" y="40" text-anchor="middle" font-size="23" font-weight="700" fill="#17202b">最初は足りていた</text>
+      <text x="165" y="76" text-anchor="middle" font-size="19" fill="#3a4450">仕様書を書いて、実装する</text>
+      <text x="165" y="104" text-anchor="middle" font-size="19" fill="#3a4450">1本を新しく起こすなら回る</text>
+      <text x="165" y="138" text-anchor="middle" font-size="19" fill="#1f7a4d" font-weight="700">✓ 困らなかった</text>
+
+      <path d="M348 82h44" stroke="#5b6470" stroke-width="3" marker-end="url(#arA)"/>
+      <defs><marker id="arA" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#5b6470"/></marker></defs>
+
+      <rect x="404" y="6" width="330" height="152" rx="12" fill="#fdeee9" stroke="#b5401a" stroke-width="3"/>
+      <text x="569" y="40" text-anchor="middle" font-size="23" font-weight="700" fill="#b5401a">直す段になって困った</text>
+      <text x="569" y="72" text-anchor="middle" font-size="18" fill="#b5401a">改善・修正が次から次に出てくる</text>
+      <text x="569" y="96" text-anchor="middle" font-size="18" fill="#b5401a">仕様書は「あるべき姿」の紙</text>
+      <text x="569" y="126" text-anchor="middle" font-size="19" fill="#b5401a" font-weight="700">受け止める場所が、どこにも無い</text>
+      <text x="569" y="148" text-anchor="middle" font-size="17" fill="#b5401a">メモに溜まる → 忘れられる</text>
+
+      <path d="M752 82h44" stroke="#5b6470" stroke-width="3" marker-end="url(#arA)"/>
+
+      <rect x="808" y="6" width="312" height="152" rx="12" fill="#eaf1ff" stroke="#0f62fe" stroke-width="3"/>
+      <text x="964" y="40" text-anchor="middle" font-size="23" font-weight="700" fill="#0f62fe">だから置き場を作った</text>
+      <text x="964" y="76" text-anchor="middle" font-size="19" fill="#0f62fe">改善・修正を仕様書から追い出す</text>
+      <text x="964" y="104" text-anchor="middle" font-size="19" fill="#0f62fe">番号を付けて、台帳に載せる</text>
+      <text x="964" y="140" text-anchor="middle" font-size="24" font-weight="700" fill="#0f62fe">＝「課題」</text>
+      <text x="560" y="184" text-anchor="middle" font-size="20" fill="#5b6470">思いつきの新機軸ではなく、やっていれば必ずぶつかる、当然の帰結</text>
+    </g>
+  </svg>
+  </figure>
+</section>
+
+<!-- 6 -->
+<section class="airy" data-speaker-notes="仕様書も課題の一種だと括った。">
+  <p class="chap">第1章 前提</p>
+  <h2>すべてを「課題」に揃えた</h2>
+  <table>
+    <tr><th style="width:180px">　</th><th>従来</th><th>いま</th></tr>
+    <tr><td class="k" style="width:180px;text-align:left">ゼロから作る</td><td>仕様書を書く</td><td rowspan="2" style="background:#eaf1ff;vertical-align:middle;font-size:26px;font-weight:700;color:#0f62fe">どちらも<strong>課題</strong><br><span style="font-size:20px;font-weight:400">同じ道具・同じ手順・同じ台帳</span></td></tr>
+    <tr><td class="k" style="width:180px;text-align:left">動くものを直す</td><td>変更要求を出す</td></tr>
+    <tr><td class="k" style="width:180px;text-align:left">作法と置き場</td><td class="hot">別々</td></tr>
+  </table>
+  <p class="catch">開発に <em>「特別な最初」</em> が無くなる</p>
+  <p class="muted">1本目を起こすのも、10年動いているものに1行足すのも、<strong>同じ形の一覧に並ぶ</strong></p>
+</section>
+
+<!-- 7 -->
+<section class="divider">
+  <p class="num">第 2 章</p>
+  <h1>出てきた問題</h1>
+  <div class="rule"></div>
+  <p class="muted">課題で全部を回し始めた瞬間に噴き出した、7つの問題</p>
+</section>
+
+<!-- 8 -->
+<section data-speaker-notes="視点が逆。仕様は人から、契約はプログラムから。">
+  <p class="chap">第2章 出てきた問題</p>
+  <h2>「契約」とは</h2>
+  <div class="cols">
+    <div style="border:2px solid #d9dee4;border-radius:12px;padding:18px 22px">
+      <h3 style="font-size:26px">仕様——<span class="muted" style="font-size:22px">人から見たもの</span></h3>
+      <p style="font-size:23px;margin-top:8px">「こうなっていてほしい」<br>「こう動いてほしい」</p>
+      <p class="muted" style="font-size:20px;margin-top:10px">人どうしなら、これで話が通じる</p>
+      <p class="hot" style="font-size:22px;margin-top:12px">機械は、要望からは作れない</p>
+    </div>
+    <div style="border:3px solid #0f62fe;border-radius:12px;padding:18px 22px;background:#f7faff">
+      <h3 style="font-size:26px;color:#0f62fe">契約——<span style="font-size:22px;color:#5b6470">プログラムから見たもの</span></h3>
+      <p style="font-size:23px;margin-top:8px"><strong>どこまでが自分の責任か</strong><br>何を引き受け、何は引き受けないか</p>
+      <p style="font-size:22px;margin-top:10px">プログラム同士が交わす、<strong>境界と責任範囲の約束</strong></p>
+      <p class="muted" style="font-size:20px;margin-top:12px">この線が引かれて、はじめて作れる</p>
+    </div>
+  </div>
+  <p class="catch" style="font-size:30px">契約の中でいちばん重いのが <em>インターフェース</em><br><span style="font-size:23px;font-weight:400">外から見える約束——何を受け取って、何を返すか。<strong>ここは守る。それ以外は直してよい</strong></span></p>
+</section>
+
+<!-- 9 -->
+<section data-speaker-notes="設定・入力・出力の3つ。それを具体化したものが API。人が契約として見るときはここが最重要。">
+  <p class="chap">第2章 出てきた問題</p>
+  <h2>インターフェースの導入</h2>
+  <p style="font-size:24px;font-weight:700">インターフェースとは——<strong>設定・入力・出力</strong></p>
+  <figure>
+  <svg viewBox="0 0 1120 255" role="img" aria-label="インターフェースは設定・入力・出力の3つ。具体化したものが API">
+    <g font-family="Hiragino Sans, sans-serif" text-anchor="middle">
+      <g fill="#eaf1ff" stroke="#0f62fe" stroke-width="3">
+        <rect x="0"   y="22" width="286" height="96" rx="12"/>
+        <rect x="306" y="22" width="286" height="96" rx="12"/>
+        <rect x="612" y="22" width="286" height="96" rx="12"/>
+      </g>
+      <g font-size="28" font-weight="700" fill="#0f62fe">
+        <text x="143" y="60">設定</text><text x="449" y="60">入力</text><text x="755" y="60">出力</text>
+      </g>
+      <g font-size="18" fill="#0f62fe">
+        <text x="143" y="88">動く前に決まっている前提</text><text x="143" y="108">（設定・環境）</text>
+        <text x="449" y="88">何を受け取るか</text><text x="449" y="108">その形と決まり</text>
+        <text x="755" y="88">何を返すか</text><text x="755" y="108">その形と決まり</text>
+      </g>
+
+      <path d="M906 70h34" stroke="#5b6470" stroke-width="3" marker-end="url(#arF)"/>
+      <defs><marker id="arF" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#5b6470"/></marker></defs>
+      <rect x="948" y="22" width="172" height="96" rx="12" fill="#f4f6f9" stroke="#5b6470" stroke-width="2"/>
+      <text x="1034" y="58" font-size="26" font-weight="700" fill="#17202b">API</text>
+      <text x="1034" y="86" font-size="17" fill="#5b6470">3つから導かれる</text>
+      <text x="1034" y="106" font-size="17" fill="#5b6470">呼び出し方＝具体化</text>
+
+      <text x="560" y="152" font-size="20" fill="#5b6470">この3つは、<tspan font-weight="700" fill="#17202b">どの層でも同じ形で書ける</tspan></text>
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="0"   y="168" width="266" height="52" rx="9"/>
+        <rect x="570" y="168" width="266" height="52" rx="9"/>
+        <rect x="855" y="168" width="265" height="52" rx="9"/>
+      </g>
+      <rect x="285" y="168" width="266" height="52" rx="9" fill="#eaf1ff" stroke="#0f62fe" stroke-width="3"/>
+      <g font-size="21" fill="#17202b">
+        <text x="133" y="200">基盤</text>
+        <text x="703" y="200">スクリプト</text><text x="988" y="200">共通ルーチン</text>
+      </g>
+      <text x="418" y="200" font-size="21" font-weight="700" fill="#0f62fe">部品</text>
+      <circle cx="533" cy="180" r="7" fill="#0f62fe"/>
+      <text x="560" y="245" font-size="19" fill="#5b6470">基盤・部品・スクリプト・共通ルーチン——<tspan font-weight="700" fill="#17202b">どれにも、このインターフェースを作れる</tspan></text>
+    </g>
+  </svg>
+  </figure>
+  <p class="catch" style="font-size:30px">人が契約として見るときは、<em>インターフェースが最重要</em>。<em>ここは絶対に守る</em></p>
+  <p class="muted">今回、これを<strong>インターフェース定義の規則</strong>として新設し、<strong>全13リポジトリへ配布</strong>した</p>
+</section>
+
+<!-- 10 -->
+<section data-speaker-notes="この表がこの後ずっと立ち返る地図。">
+  <p class="chap">第2章 出てきた問題</p>
+  <h2>問題は7つ</h2>
+  <table class="small">
+    <tr><th style="width:62px">#</th><th style="width:330px">問題</th><th>一言でいうと</th></tr>
+    <tr><td class="k">3-1</td><td><strong>課題が閉じない</strong></td><td>積んだ課題が終わらない。原因は5つに分かれる</td></tr>
+    <tr><td class="k">3-2</td><td><strong>単位が大きすぎる</strong></td><td>1つの中に3つの仕事。どこが悪いか切り分けられず、契約も書けない</td></tr>
+    <tr><td class="k">3-3</td><td><strong>管理の道具が間に合わせ</strong></td><td>計画表はあるが貧弱。AI に即したチケットシステムが要る</td></tr>
+    <tr><td class="k">3-4</td><td><strong>どこまで確かめ直すか分からない</strong></td><td>1か所直すたびに全部確かめている。従来の CI の段取りでは追いつかない</td></tr>
+    <tr><td class="k">3-5</td><td><strong>人が見る関所は1か所</strong></td><td>見るのは2点（検証・全量データ）。人のレビューを増やしても品質は上がらない</td></tr>
+    <tr><td class="k">3-6</td><td><strong>失敗を溜めて棚卸しする</strong></td><td class="good">同じ失敗を繰り返さないための取り組み（前向きな話）</td></tr>
+    <tr><td class="k">3-7</td><td><strong>どこまで自動で回せるか</strong></td><td>人を待たずに回して仕事量を増やす。そのとき、全体の統合をどう取るか</td></tr>
+  </table>
+</section>
+
+<!-- 11 -->
+<section data-speaker-notes="一番痛い問題。この後 b・c・d・e を1枚ずつ。">
+  <p class="chap">第2章 3-1 課題が閉じない</p>
+  <h2>課題が閉じない——原因は5つ</h2>
+  <table>
+    <tr><th style="width:62px">　</th><th style="width:400px">原因</th><th>一言でいうと</th></tr>
+    <tr><td class="k">(a)</td><td>課題が課題を生む</td><td>着手すると別の課題が湧き、元の課題が止まる</td></tr>
+    <tr><td class="k">(b)</td><td>仕様に軽重がなく、どれも直せない</td><td><strong>守るべき線が引かれていない</strong></td></tr>
+    <tr><td class="k">(c)</td><td>課題と課題の隙間に落ちる</td><td><strong>契約が2枚あっても保証は0枚</strong></td></tr>
+    <tr><td class="k">(d)</td><td>波及が見えない</td><td>土台を直したとき、影響がどこへ届くか見えない</td></tr>
+    <tr><td class="k">(e)</td><td>順番を守らないと閉じない</td><td>土台側から順にやらないと、上は何度でもやり直し</td></tr>
+  </table>
+</section>
+
+<!-- 12 -->
+<section data-speaker-notes="考えて出た問題ではなく、実物にぶつかって発覚した。">
+  <p class="chap">第2章 3-2 単位が大きすぎる</p>
+  <h2>1つの中に、3つの仕事が入っている</h2>
+  <figure>
+  <svg viewBox="0 0 1120 290" role="img" aria-label="大きなかたまりと、部品3つに割った形">
+    <g font-family="Hiragino Sans, sans-serif">
+      <text x="240" y="28" text-anchor="middle" font-size="22" font-weight="700" fill="#b5401a">いま：1つのかたまり</text>
+      <rect x="40" y="45" width="400" height="180" rx="14" fill="#fdeee9" stroke="#b5401a" stroke-width="3"/>
+      <g fill="#fff" stroke="#b5401a" stroke-width="2">
+        <rect x="70"  y="80" width="150" height="52" rx="8"/>
+        <rect x="255" y="80" width="150" height="52" rx="8"/>
+        <rect x="160" y="150" width="150" height="52" rx="8"/>
+      </g>
+      <g font-size="19" fill="#b5401a" text-anchor="middle">
+        <text x="145" y="112">振り分け</text><text x="330" y="112">書き換え</text><text x="235" y="182">出力</text>
+      </g>
+      <text x="240" y="253" text-anchor="middle" font-size="20" fill="#b5401a">どこが悪いか外から切り分けられない</text>
+      <text x="240" y="278" text-anchor="middle" font-size="20" fill="#b5401a">受け取るもの3種・返すもの3種 → 契約が書けない</text>
+
+      <path d="M470 135h80" stroke="#5b6470" stroke-width="4" marker-end="url(#ar3)"/>
+      <defs><marker id="ar3" markerWidth="11" markerHeight="11" refX="8" refY="5" orient="auto">
+        <path d="M0 0l9 5-9 5z" fill="#5b6470"/></marker></defs>
+
+      <text x="840" y="28" text-anchor="middle" font-size="22" font-weight="700" fill="#0f62fe">これから：部品に割る</text>
+      <g fill="#eaf1ff" stroke="#0f62fe" stroke-width="3">
+        <rect x="575" y="80" width="160" height="105" rx="12"/>
+        <rect x="760" y="80" width="160" height="105" rx="12"/>
+        <rect x="945" y="80" width="160" height="105" rx="12"/>
+      </g>
+      <g font-size="21" fill="#0f62fe" text-anchor="middle" font-weight="700">
+        <text x="655" y="122">振り分け</text><text x="840" y="122">書き換え</text><text x="1025" y="122">出力</text>
+      </g>
+      <g font-size="16" fill="#0f62fe" text-anchor="middle">
+        <text x="655" y="152">契約</text><text x="840" y="152">契約</text><text x="1025" y="152">契約</text>
+        <text x="655" y="172">入→出</text><text x="840" y="172">入→出</text><text x="1025" y="172">入→出</text>
+      </g>
+      <path d="M737 132h21M922 132h21" stroke="#0f62fe" stroke-width="3" marker-end="url(#ar4)"/>
+      <defs><marker id="ar4" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#0f62fe"/></marker></defs>
+      <text x="840" y="253" text-anchor="middle" font-size="20" fill="#0f62fe">部品ごとに「何を受け取って何を返すか」が書ける</text>
+      <text x="840" y="278" text-anchor="middle" font-size="20" fill="#0f62fe">おかしくなったとき、どの部品が悪いか<tspan font-weight="700">機械が指させる</tspan></text>
+    </g>
+  </svg>
+  </figure>
+  <p class="catch warn" style="font-size:28px">人は大きいものを端から端まで見ると、必ず見落とす。<br><em style="color:#b5401a">能力の問題ではなく、大きさの問題</em></p>
+</section>
+
+<!-- 13 -->
+<section data-speaker-notes="いまの計画表は仮の姿。管理側が本気で考えるのはここ。">
+  <p class="chap">第2章 3-3 管理の道具</p>
+  <h2>管理の道具が、まだ間に合わせ</h2>
+  <div class="boxes" style="flex:1">
+    <div style="border-color:#1f7a4d">
+      <h3 class="good" style="font-size:26px">いま在るもの</h3>
+      <p style="font-size:21px">課題に<strong>状態の印</strong>が付く</p>
+      <p style="font-size:21px">全リポジトリの課題を1枚にまとめた<strong>計画表</strong></p>
+      <p class="muted" style="font-size:19px;margin-top:auto">間に合わせの1枚の表。<br>管理の道具と呼べる代物ではない</p>
+    </div>
+    <div style="border-color:#b5401a">
+      <h3 class="hot" style="font-size:26px">足りないもの</h3>
+      <p style="font-size:21px"><strong>遷移を定義</strong>して変えられること</p>
+      <p style="font-size:21px">全部を<strong>一括して見られる</strong>こと</p>
+      <p style="font-size:21px"><strong>数に耐える見せ方</strong>（メールでは多すぎて読めない）</p>
+    </div>
+    <div style="border-color:#5b6470">
+      <h3 style="font-size:26px">AI には要らないもの</h3>
+      <p style="font-size:19px"><strong>アサイン</strong>——誰に割り当てるか。<br>人が何人もいる前提の機能</p>
+      <p style="font-size:19px"><strong>クローズ</strong>——AI が自分で終わらせる。<br>人が押す形にすると、そこで止まる</p>
+    </div>
+  </div>
+  <p class="catch" style="font-size:30px">要るのは、<em>AI に即したチケットシステム</em>——<br>管理の機能は取り入れ、要らない機能は落とし、<em>独立した道具として作る</em></p>
+</section>
+
+<!-- 14 -->
+<section data-speaker-notes="重いことより厄介なのは、その重さを説明できないこと。">
+  <p class="chap">第2章 3-4 確かめる範囲</p>
+  <h2>「1行直しただけで、なぜ全部確かめるのか」</h2>
+  <table>
+    <tr><th style="width:400px">直した内容</th><th>影響が届く先</th></tr>
+    <tr><td>説明の文章を1行直した</td><td class="good">誰にも影響しない</td></tr>
+    <tr><td>関数の名前を変えた</td><td class="hot">呼んでいる側すべて</td></tr>
+    <tr><td>返す値の形を変えた</td><td class="hot">受け取る側すべて。<strong style="color:#b5401a">しかも黙って壊れる</strong></td></tr>
+  </table>
+  <p class="catch warn" style="font-size:32px">この3つを、いまの仕組みは<em style="color:#b5401a">区別していない</em><br>だから常に最大の扱い——全部確かめ直す</p>
+  <p class="muted">検知の仕組みも依存の表も動いている。<br>ただし<strong>「この変更はここまでしか届かない」と機械が言い切れる形</strong>には届いていない</p>
+</section>
+
+<!-- 15 -->
+<section data-speaker-notes="夜間一括は例にすぎない。従来 CI の段取りそのものが使えない。">
+  <p class="chap">第2章 3-4 回すリズム</p>
+  <h2>従来の CI の段取りは、ここでは使えない</h2>
+  <figure>
+  <svg viewBox="0 0 1120 235" role="img" aria-label="従来 CI の直列の段取りと、イベントドリブンで回る形の対比">
+    <g font-family="Hiragino Sans, sans-serif">
+      <text x="0" y="20" font-size="21" font-weight="700" fill="#b5401a">従来の CI ——人が1段ずつ通す</text>
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="0"   y="34" width="150" height="48" rx="8"/>
+        <rect x="192" y="34" width="150" height="48" rx="8"/>
+        <rect x="384" y="34" width="150" height="48" rx="8"/>
+        <rect x="576" y="34" width="150" height="48" rx="8"/>
+        <rect x="768" y="34" width="150" height="48" rx="8"/>
+        <rect x="960" y="34" width="160" height="48" rx="8"/>
+      </g>
+      <g font-size="19" fill="#17202b" text-anchor="middle">
+        <text x="75" y="64">変更を出す</text><text x="267" y="64">プルリク</text><text x="459" y="64">レビュー</text>
+        <text x="651" y="64">承認</text><text x="843" y="64">取り込む</text><text x="1040" y="64">テスト</text>
+      </g>
+      <g stroke="#b5401a" stroke-width="3" marker-end="url(#arB)">
+        <path d="M154 58h30M346 58h30M538 58h30M730 58h30M922 58h30"/>
+      </g>
+      <defs><marker id="arB" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#b5401a"/></marker></defs>
+      <g font-size="15" fill="#b5401a" text-anchor="middle">
+        <text x="459" y="99">人待ちで止まる</text><text x="651" y="99">人待ちで止まる</text>
+      </g>
+      <text x="560" y="122" text-anchor="middle" font-size="18" fill="#b5401a">昼間の作業を、1回そこで閉じる</text>
+
+      <line x1="0" y1="142" x2="1120" y2="142" stroke="#d9dee4" stroke-width="2"/>
+
+      <text x="0" y="170" font-size="21" font-weight="700" fill="#0f62fe">これから ——イベントドリブンで即座に回す</text>
+      <rect x="0" y="184" width="200" height="46" rx="8" fill="#eaf1ff" stroke="#0f62fe" stroke-width="3"/>
+      <text x="100" y="213" text-anchor="middle" font-size="19" fill="#0f62fe" font-weight="700">イベントが起きる</text>
+      <path d="M204 207h34" stroke="#0f62fe" stroke-width="3" marker-end="url(#arC)"/>
+      <defs><marker id="arC" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#0f62fe"/></marker></defs>
+      <rect x="242" y="184" width="620" height="46" rx="8" fill="#fff" stroke="#0f62fe" stroke-width="3"/>
+      <text x="552" y="213" text-anchor="middle" font-size="19" fill="#0f62fe">機械が判断して、その場で反映 → 確かめる → 直す → 次を回す</text>
+      <path d="M866 207h34" stroke="#0f62fe" stroke-width="3" marker-end="url(#arC)"/>
+      <rect x="904" y="184" width="216" height="46" rx="8" fill="#0f62fe"/>
+      <text x="1012" y="213" text-anchor="middle" font-size="19" fill="#fff" font-weight="700">人を待たない・並列</text>
+    </g>
+  </svg>
+  </figure>
+  <div class="cols">
+    <div><p class="hot" style="font-size:22px"><strong style="color:#b5401a">ぬるい</strong>——人待ちの段で止まるたびに変更が溜まり、どこで壊れたか分からなくなる</p></div>
+    <div><p class="hot" style="font-size:22px"><strong style="color:#b5401a">遅すぎる</strong>——人が手で書いていた時代のサイクルに合わせた段取り</p></div>
+    <div><p class="hot" style="font-size:22px"><strong style="color:#b5401a">目指す姿に合わない</strong>——24時間365日・並列で動くものに、承認待ちは効かない</p></div>
+  </div>
+  <p class="catch" style="font-size:30px">イベントドリブンは、<em>機械が自分で判断して回す形</em>でないと成立しない<br><span style="font-size:22px;font-weight:400">人が判断する形のままでは、イベントが来るたびに人のところで詰まる</span></p>
+</section>
+
+<!-- 16 -->
+<section data-speaker-notes="片方だけでは足りない。1つにまとめて簡略化してはいけない。">
+  <p class="chap">第2章 3-5 品質</p>
+  <h2>関所は1か所。そこで見るのは2点</h2>
+  <table>
+    <tr><th style="width:230px">　</th><th>(1) 検証</th><th>(2) 全量データ</th></tr>
+    <tr><td class="k" style="width:230px;text-align:left">何を探すか</td><td><strong>仕様との食い違い</strong></td><td><strong>想定外のパターン</strong></td></tr>
+    <tr><td class="k" style="width:230px;text-align:left">入力</td><td>人が読んで分かる形に整えたもの</td><td>本物のデータを<strong>全部</strong></td></tr>
+    <tr><td class="k" style="width:230px;text-align:left">判定するのは</td><td><strong>人</strong></td><td><strong>機械</strong>（期待値と突き合わせる）</td></tr>
+    <tr><td class="k" style="width:230px;text-align:left">これが無いと</td><td class="hot">「動くが意図と違う」を見逃す</td><td class="hot">「そんな値が来るとは思わなかった」を見逃す</td></tr>
+  </table>
+  <p class="catch" style="font-size:30px">全量とは、<em>いまのところの「世界の全部」</em>——だから言い切れる</p>
+</section>
+
+<!-- 17 -->
+<section data-speaker-notes="トレードオフではない。人が見ても品質が上がらないから1点に絞っている。">
+  <p class="chap">第2章 3-5 品質</p>
+  <h2>人が見るのは、インターフェースが守られているか</h2>
+  <p class="catch" style="font-size:36px">人が確かめるのは1点——<em>インターフェースが守られているか</em></p>
+  <div class="boxes" style="flex:1">
+    <div style="border-color:#0f62fe">
+      <h3 style="font-size:25px;color:#0f62fe">なぜ、そこなのか</h3>
+      <p style="font-size:21px">何を受け取って何を返すか——<strong>人が仕様として思い描いていたものと、そのまま突き合わせられる</strong></p>
+      <p style="font-size:21px">中の作りを追わなくてよい</p>
+      <p style="font-size:21px"><strong>機械と人の乖離が、ここに出る</strong>——「動くが意図と違う」は、受け取るものと返すものの形に表れる</p>
+    </div>
+    <div style="border-color:#5b6470">
+      <h3 style="font-size:25px">人のレビューを増やしても、品質は上がらない</h3>
+      <p style="font-size:21px"><strong>現状では、人のレビューのほうが<br>機械のレビューより品質が落ちる</strong></p>
+      <p style="font-size:21px">人は遅い。一度に見渡せる範囲が狭い</p>
+      <p style="font-size:21px">大きいものを端から端まで見れば、必ず見落とす</p>
+    </div>
+  </div>
+  <p class="catch" style="font-size:27px">品質を犠牲にして速さを取った、という話ではない。<br><em>人が見ても上がらないから、いちばん効く1点に絞っている</em></p>
+</section>
+
+<!-- 18 -->
+<section data-speaker-notes="原因と穴の場所は違う。原因はその場で何が起きたか、穴は書かれていない場所。">
+  <p class="chap">第2章 3-6 失敗の棚卸し</p>
+  <h2>失敗を溜めて、棚卸しする</h2>
+  <p class="muted" style="font-size:23px">失敗はその場で直して終わりにせず、<strong>失敗の一覧（危険信号）</strong>へ、この5段で1件ずつ記帳する</p>
+  <figure>
+  <svg viewBox="0 0 1120 200" role="img" aria-label="記帳の5段">
+    <g font-family="Hiragino Sans, sans-serif" text-anchor="middle">
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="0"   y="14" width="196" height="128" rx="10"/>
+        <rect x="231" y="14" width="196" height="128" rx="10"/>
+        <rect x="693" y="14" width="196" height="128" rx="10"/>
+      </g>
+      <rect x="462" y="14" width="196" height="128" rx="10" fill="#fdeee9" stroke="#b5401a" stroke-width="3"/>
+      <rect x="924" y="14" width="196" height="128" rx="10" fill="#eaf1ff" stroke="#0f62fe" stroke-width="3"/>
+
+      <g font-size="19" font-weight="700" fill="#5b6470">
+        <text x="98"   y="44">1</text>
+        <text x="329"  y="44">2</text>
+        <text x="560"  y="44" fill="#b5401a">3</text>
+        <text x="791"  y="44">4</text>
+        <text x="1022" y="44" fill="#0f62fe">5</text>
+      </g>
+      <g font-size="23" font-weight="700">
+        <text x="98"   y="78" fill="#17202b">何をした</text>
+        <text x="329"  y="78" fill="#17202b">何が起こった</text>
+        <text x="560"  y="78" fill="#b5401a">どうして起こった</text>
+        <text x="791"  y="78" fill="#17202b">どこに穴があるか</text>
+        <text x="1022" y="78" fill="#0f62fe">どのように直すか</text>
+      </g>
+      <g font-size="16" fill="#5b6470">
+        <text x="98"   y="105">何をしようとして</text><text x="98"   y="126">何を実行したか</text>
+        <text x="329"  y="105">実際に何が起きたか</text><text x="329"  y="126">期待と違ったのはどこか</text>
+      </g>
+      <g font-size="16" fill="#b5401a">
+        <text x="560" y="105">どういう条件が揃うと</text><text x="560" y="126">これが起きるのか</text>
+      </g>
+      <g font-size="16" fill="#5b6470">
+        <text x="791" y="105">設計書・規則のどこに</text><text x="791" y="126">書かれていないのか</text>
+      </g>
+      <g font-size="15" fill="#0f62fe">
+        <text x="1022" y="105">どの規則へ書き足すか</text><text x="1022" y="126">書けて初めて1件が閉じる</text>
+      </g>
+
+      <g stroke="#5b6470" stroke-width="3" marker-end="url(#arD)">
+        <path d="M200 78h22M431 78h22M662 78h22M893 78h22"/>
+      </g>
+      <defs><marker id="arD" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto">
+        <path d="M0 0l7 4.5-7 4.5z" fill="#5b6470"/></marker></defs>
+
+      <text x="560" y="176" font-size="20" fill="#5b6470">「原因」と「穴の場所」は違う——原因はその場で何が起きたか、穴は<tspan font-weight="700">書いてあるべきことが書かれていない場所</tspan></text>
+    </g>
+  </svg>
+  </figure>
+  <p class="catch" style="font-size:32px">溜めたら棚卸しして<em>規則へ組み込む</em>。組み込んだら消す<br><span style="font-size:26px;font-weight:400">——だから<strong>失敗の一覧（危険信号）が空であること</strong>が健全な状態。<br>溜まっていたら、組み込みが追いついていない合図</span></p>
+  <p class="muted">狙いは3つ——<strong>同じ失敗を二度させない／正解に早く着く／レビューの回数を減らす</strong></p>
+</section>
+
+<!-- 19 -->
+<section data-speaker-notes="道具は白紙。費用の話も避けて通れない。">
+  <p class="chap">第2章 3-7 どこまで自動で回せるか</p>
+  <h2>どこまで自動で回せるか——そのとき、統合をどう取るか</h2>
+  <figure>
+  <svg viewBox="0 0 1120 232" role="img" aria-label="人の OK を待つ形と、待たずに回す形の対比">
+    <g font-family="Hiragino Sans, sans-serif">
+      <text x="20" y="26" font-size="21" font-weight="700" fill="#5b6470">いま——1本ずつ、人の OK を待って進む</text>
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="20" y="40" width="150" height="56" rx="9"/><rect x="190" y="40" width="150" height="56" rx="9"/>
+      </g>
+      <g font-size="19" fill="#17202b" text-anchor="middle"><text x="95" y="75">AI が作る</text><text x="265" y="75">AI が直す</text></g>
+      <rect x="360" y="34" width="180" height="68" rx="9" fill="#1f7a4d"/>
+      <text x="450" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="#fff">人のレビュー</text>
+      <text x="450" y="90" text-anchor="middle" font-size="15" fill="#cfe6da">1回ごとに OK を待つ</text>
+      <path d="M556 68h60" stroke="#5b6470" stroke-width="3" marker-end="url(#ar6)"/>
+      <defs><marker id="ar6" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#5b6470"/></marker></defs>
+      <text x="660" y="75" font-size="20" fill="#5b6470">次へ</text>
+
+      <text x="20" y="146" font-size="21" font-weight="700" fill="#0f62fe">自律型——人を待たずに回して、仕事量を増やす</text>
+      <g fill="#f4f6f9" stroke="#d9dee4" stroke-width="2">
+        <rect x="20" y="158" width="150" height="56" rx="9"/><rect x="190" y="158" width="150" height="56" rx="9"/>
+      </g>
+      <g font-size="19" fill="#17202b" text-anchor="middle"><text x="95" y="193">AI が作る</text><text x="265" y="193">AI が直す</text></g>
+      <rect x="360" y="152" width="180" height="68" rx="9" fill="#eaf1ff" stroke="#0f62fe" stroke-width="4"/>
+      <text x="450" y="182" text-anchor="middle" font-size="22" font-weight="700" fill="#0f62fe">そのまま通す</text>
+      <text x="450" y="207" text-anchor="middle" font-size="15" fill="#0f62fe">OK を待たない</text>
+      <path d="M556 186h60" stroke="#0f62fe" stroke-width="3" marker-end="url(#ar7)"/>
+      <defs><marker id="ar7" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+        <path d="M0 0l8 5-8 5z" fill="#0f62fe"/></marker></defs>
+      <text x="660" y="193" font-size="20" fill="#0f62fe">次へ</text>
+
+      <rect x="740" y="34" width="370" height="186" rx="12" fill="#f4f6f9" stroke="#d9dee4" stroke-width="2"/>
+      <text x="925" y="68" text-anchor="middle" font-size="22" font-weight="700" fill="#17202b">そのとき残る問い</text>
+      <text x="925" y="102" text-anchor="middle" font-size="19" fill="#3a4450">複数の作業が同時に走る</text>
+      <text x="925" y="130" text-anchor="middle" font-size="19" fill="#3a4450">→ 全体を見渡す隙がなくなる</text>
+      <text x="925" y="172" text-anchor="middle" font-size="20" font-weight="700" fill="#b5401a">同時に走らせながら</text>
+      <text x="925" y="198" text-anchor="middle" font-size="20" font-weight="700" fill="#b5401a">統合を取り続ける技術は、どこにも無い</text>
+    </g>
+  </svg>
+  </figure>
+  <p class="catch" style="font-size:29px">種はある——いま作っている<em>「計画」の仕組み</em>。<span style="font-size:24px;font-weight:400">ただし、回す道具そのものは<span class="hot">白紙</span></span></p>
+</section>
+
+<!-- 20 -->
+<section data-speaker-notes="別々の問題を解いてから最後に大工事、という構図ではない。">
+  <p class="chap">第2章 まとめ</p>
+  <h2>ここまでの問題は、全部同じ方向を向いている</h2>
+  <table class="small">
+    <tr><th style="width:430px">解くと</th><th>機械ができるようになること</th></tr>
+    <tr><td>契約の境界をはっきりさせる（3-1b）</td><td><strong>「約束どおりか」を判定できる</strong></td></tr>
+    <tr><td>単位を小さく分ける（3-2）</td><td><strong>「どこが悪いか」を指させる</strong></td></tr>
+    <tr><td>管理の道具を作り直す（3-3）</td><td><strong>「次に何をすべきか」を自分で決められる</strong></td></tr>
+    <tr><td>波及を仕組みにする（3-1d）</td><td><strong>「誰に影響するか」を自分で洗い出せる</strong></td></tr>
+    <tr><td>品質の関所を機械が判定する形にする（3-5）</td><td><strong>人を待たずに合否が付く</strong></td></tr>
+  </table>
+  <p class="catch" style="font-size:30px">どれも、いまは<em>人がやっている</em>こと。<br>いまの姿は <em>「手で回している自律型」</em></p>
+</section>
+
+<!-- 21 -->
+<section class="divider">
+  <p class="num">第 3 章</p>
+  <h1>いま打っている手</h1>
+  <div class="rule"></div>
+  <p class="muted">部品への切り出しと、それが環境全体へ及ぼした波及</p>
+</section>
+
+<!-- 22 -->
+<section data-speaker-notes="1つの概念を足したことが、環境全体の書き直しに波及した。">
+  <p class="chap">第3章 いま打っている手</p>
+  <h2>部品への切り出し——8月31日に解放</h2>
+  <figure>
+  <svg viewBox="0 0 1080 215" role="img" aria-label="共通プログラム・部品・基盤の3層">
+    <g font-family="Hiragino Sans, sans-serif" text-anchor="middle">
+      <rect x="140" y="10" width="800" height="52" rx="10" fill="#f4f6f9" stroke="#d9dee4" stroke-width="2"/>
+      <text x="540" y="43" font-size="22" fill="#17202b">基盤（業務システム本体）</text>
+
+      <rect x="140" y="80" width="800" height="72" rx="10" fill="#eaf1ff" stroke="#0f62fe" stroke-width="4"/>
+      <text x="540" y="105" font-size="16" fill="#0f62fe">← 新しい層 →</text>
+      <g fill="#fff" stroke="#0f62fe" stroke-width="2">
+        <rect x="175" y="112" width="170" height="30" rx="6"/><rect x="365" y="112" width="170" height="30" rx="6"/>
+        <rect x="555" y="112" width="170" height="30" rx="6"/><rect x="745" y="112" width="160" height="30" rx="6"/>
+      </g>
+      <g font-size="17" fill="#0f62fe" font-weight="700">
+        <text x="260" y="133">部品＋契約</text><text x="450" y="133">部品＋契約</text>
+        <text x="640" y="133">部品＋契約</text><text x="825" y="133">部品＋契約</text>
+      </g>
+
+      <rect x="140" y="170" width="800" height="42" rx="10" fill="#f4f6f9" stroke="#d9dee4" stroke-width="2"/>
+      <text x="540" y="197" font-size="22" fill="#17202b">土台の共通プログラム</text>
+    </g>
+  </svg>
+  </figure>
+  <p style="font-size:24px">契約は <strong>前提・入力・出力</strong> の3つに分け、そこから導かれる<strong>呼び出し方</strong>までを約束とする。<br><span class="muted">契約を持つ単位が小さくなるほど、機械が確かめられる範囲が広がる</span></p>
+  <p class="catch warn" style="font-size:28px">1つの概念を足したことが、<em style="color:#b5401a">環境全体の書き直しに波及</em>した<br><span style="font-size:22px;font-weight:400">8月25〜26日に12リポジトリの設計書を書き直し。<strong>8月31日に一区切りつけて、開発を再開する</strong></span></p>
+</section>
+
+<!-- 23 -->
+<section data-speaker-notes="左の青が元の問題。その下にぶら下がるのが派生。右端の状態を見てほしい。">
+  <p class="chap">第3章 いま打っている手</p>
+  <h2>打っている手の一覧</h2>
+  <table class="xtight">
+    <tr><th style="width:230px">元の問題</th><th>打っている手</th><th style="width:210px">状態</th></tr>
+
+    <tr><td rowspan="4" style="background:#eaf1ff;color:#0f62fe;font-weight:700;vertical-align:middle;font-size:18px">3-1<br>課題が閉じない</td>
+        <td><strong>(a〜c) 課題の書き方</strong>——「自分のところだけ書く／他人の事情は書かない」を規則に</td><td class="good">動いている</td></tr>
+    <tr><td><strong>(b) 契約の境界</strong>——インターフェース定義の規則を新設し、全13リポジトリへ配布</td><td class="good">導入したところ</td></tr>
+    <tr><td><strong>(d) 波及</strong>——契約変更の検知は動く。受け先は「計画」リポジトリと決めた</td><td class="hot">手作業・仕組み化はこれから</td></tr>
+    <tr><td><strong>(e) 順番</strong>——依存の梯子を1枚の表に確定。計画がこれを読んで層を自動判定</td><td class="good">動いている</td></tr>
+
+    <tr><td style="background:#eaf1ff;color:#0f62fe;font-weight:700;font-size:18px">3-2<br>単位が大きすぎる</td>
+        <td><strong>部品への切り出し</strong>——新しい種類を設け、基盤を切り出す。部品ごとに契約を持たせる</td><td><strong>いま最大の取り組み・8/31 解放</strong></td></tr>
+
+    <tr><td style="background:#eaf1ff;color:#0f62fe;font-weight:700;font-size:18px">3-3<br>管理の道具が間に合わせ</td>
+        <td>計画表——全リポジトリの課題を1枚に。ただし間に合わせ</td><td class="hot">仮の姿・道具の作り直しが要る</td></tr>
+
+    <tr><td style="background:#eaf1ff;color:#0f62fe;font-weight:700;font-size:18px">3-4<br>どこまで確かめ直すか</td>
+        <td>分業して後で取り込む仕組みは導入済み</td><td class="hot">自動で確かめて配るは未着手</td></tr>
+
+    <tr><td style="background:#eaf1ff;color:#0f62fe;font-weight:700;font-size:18px">3-5<br>人が見る関所は1か所</td>
+        <td>人が見る関所は1か所、見るのは2点（検証・全量データ）と決めた</td><td class="hot">方針は確定・実装はこれから</td></tr>
+
+    <tr><td style="background:#eaf1ff;color:#0f62fe;font-weight:700;font-size:18px">3-6<br>失敗を溜めて棚卸し</td>
+        <td>失敗の一覧（危険信号）・記憶の整理</td><td class="good">動いている（一部は手作業）</td></tr>
+
+    <tr><td style="background:#eaf1ff;color:#0f62fe;font-weight:700;font-size:18px">3-7<br>どこまで自動で回せるか</td>
+        <td>計画の仕組みがその種になる。ほかの問題を解くこと自体が1歩</td><td class="hot">方向は定まった・道具は白紙</td></tr>
+  </table>
+</section>
+
+<!-- 24 -->
+<section class="divider">
+  <p class="num">第 4 章</p>
+  <h1>現在地と、最優先事項</h1>
+  <div class="rule"></div>
+  <p class="muted">台帳の数字と、先に片付けなければならないこと</p>
+</section>
+
+<!-- 25 -->
+<section data-speaker-notes="日別の表が主役。土日が突出しているのは意図的。合計は閉じた75＋作業110＝185。">
+  <p class="chap">第4章 現在地</p>
+  <h2>直近1週間の実績（8月19日〜26日）</h2>
+  <div class="cols" style="gap:32px">
+    <div style="flex:1.35">
+      <table class="xtight">
+        <tr><th style="width:150px">日</th><th>積んだ課題</th><th>閉じた課題</th><th>終えた作業</th></tr>
+        <tr><td>8月19日（水）</td><td>6</td><td>9</td><td>15</td></tr>
+        <tr><td>8月20日（木）</td><td>1</td><td>2</td><td>12</td></tr>
+        <tr><td>8月21日（金）</td><td>7</td><td>9</td><td>5</td></tr>
+        <tr style="background:#eaf1ff"><td><strong>8月22日（土）</strong></td><td>3</td><td><strong>14</strong></td><td><strong>27</strong></td></tr>
+        <tr style="background:#eaf1ff"><td><strong>8月23日（日）</strong></td><td>17</td><td><strong>22</strong></td><td><strong>28</strong></td></tr>
+        <tr><td>8月24日（月）</td><td>2</td><td>10</td><td>1</td></tr>
+        <tr><td>8月25日（火）</td><td>5</td><td>5</td><td>6</td></tr>
+        <tr><td>8月26日（水）</td><td>5</td><td>4</td><td>16</td></tr>
+        <tr><th>合計</th><th>46</th><th>75</th><th>110</th></tr>
+      </table>
+      <p class="muted" style="font-size:19px;margin-top:8px">土日が突出しているのは<strong>意図的</strong>——大きい変更は週末に寄せている。平日はシステムが使われているので、危険の大きい手は打てない</p>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:14px">
+      <div style="border:2px solid #d9dee4;border-radius:12px;padding:12px 18px">
+        <span style="font-size:18px;color:#5b6470">終わった仕事（閉じた課題75＋終えた作業110）</span>
+        <div style="font-size:50px;line-height:1.05;font-weight:800;color:#0f62fe">185<span style="font-size:24px">件</span></div>
+      </div>
+      <div style="border:2px solid #d9dee4;border-radius:12px;padding:12px 18px">
+        <span style="font-size:19px;color:#5b6470">いま残っている課題</span>
+        <div style="font-size:50px;line-height:1.05;font-weight:800;color:#0f62fe">4<span style="font-size:24px">件</span></div>
+      </div>
+      <div style="border:2px solid #b5401a;border-radius:12px;padding:12px 18px">
+        <span style="font-size:19px;color:#5b6470">そのうち、実際に手が止められるもの</span>
+        <div style="font-size:50px;line-height:1.05;font-weight:800;color:#b5401a">1<span style="font-size:24px">件</span></div>
+        <span style="font-size:17px;color:#b5401a">git で管理する範囲——<strong style="color:#b5401a">決めれば動く</strong>。残る3件は外の事情待ち</span>
+      </div>
+    </div>
+  </div>
+  <p class="catch" style="font-size:25px">積んだ46は入ってくる数なので、終わった数には足さない。<br><em>「やり方が分からなくて進めない」ものは0件</em></p>
+</section>
+
+<!-- 26 -->
+<section data-speaker-notes="本来は機械が解くべきことを手でやった。組み込めなかったものは、また同じ問題が起きる。">
+  <p class="chap">第4章 現在地</p>
+  <h2>組み込めなかったものは、また起きる</h2>
+  <p class="muted" style="font-size:23px">作業110件は、<strong>本来なら機械が解くべきことを手でやったもの</strong>を含む。<br>その中身は一様ではないので、まず種類で分けて見る</p>
+  <div class="boxes" style="flex:1">
+    <div style="border-color:#5b6470">
+      <h3 style="font-size:23px">仕組みに移す話ではない</h3>
+      <p style="font-size:20px">資料づくり、道具の手入れ、<br>複数リポジトリにまたがる直し</p>
+      <p class="muted" style="font-size:18px;margin-top:auto">その都度やればよい。<br><strong>減らす対象ではない</strong></p>
+    </div>
+    <div style="border-color:#1f7a4d">
+      <h3 class="good" style="font-size:23px">仕組みに組み込めた</h3>
+      <p style="font-size:20px">作業のたびに「これは仕組みにできないか」を当てて、<br><strong>できたものは規則や道具へ入れた</strong></p>
+      <p class="good" style="font-size:18px;margin-top:auto">二度目は機械が解く</p>
+    </div>
+    <div style="border-color:#b5401a" >
+      <h3 class="hot" style="font-size:23px">組み込めなかった</h3>
+      <p style="font-size:20px">「終わったが、<strong>どう仕組みにできるかは分からなかった</strong>」</p>
+      <p class="hot" style="font-size:19px;margin-top:auto"><strong style="color:#b5401a">システムに入っていない<br>＝また同じ問題が起きる</strong></p>
+    </div>
+  </div>
+  <p class="catch warn" style="font-size:30px">手で片付けたことは、<em style="color:#b5401a">片付いていない</em>。<br><span style="font-size:23px;font-weight:400">仕組みに入るまで、同じ問題は何度でも戻ってくる——<strong>台帳の「終えた」は、そこを区別していない</strong></span></p>
+</section>
+
+<!-- 27 -->
+<section class="airy" data-speaker-notes="ほかにも手は動いている。ただし、これが最優先。8月31日に一区切り。">
+  <p class="chap">第4章 最優先事項</p>
+  <h2>最優先事項——部品への切り出し</h2>
+  <p class="muted" style="font-size:23px">打っている手はほかにもある（22枚目の一覧）。<strong>そのうち、これだけは先に片付けなければならない</strong></p>
+  <p class="catch" style="font-size:36px">基盤を「部品」という単位へ割り、<em>部品ごとに契約を持たせる</em></p>
+  <div class="boxes">
+    <div style="border-color:#0f62fe">
+      <h3 style="font-size:24px;color:#0f62fe">なぜ最優先なのか</h3>
+      <p style="font-size:21px">ここが片付かないと、<strong>先へ進めない場所</strong>だから</p>
+      <p style="font-size:21px">単位が小さく契約がはっきりすれば、<strong>確かめる範囲もその分だけ狭くなる</strong></p>
+    </div>
+    <div style="border-color:#5b6470">
+      <h3 style="font-size:24px">いつ、どうなるか</h3>
+      <p style="font-size:21px"><strong>8月31日（月）に一区切りつけて、開発を再開します</strong></p>
+      <p style="font-size:21px">全部を切り出し終える、という意味ではない——<strong>開発を再開できる状態まで持っていく</strong></p>
+    </div>
+  </div>
+  <p class="muted">この作り直しは<strong>一度きり</strong>——次からを軽くするための作業です</p>
+</section>
+
+</div>
+<div class="pageno" id="pageno"></div>
+
+<script>
+  // ---- 送り: ←→キー・クリック・スペース。URL の #n で途中から開ける ----
+  const slides = [...document.querySelectorAll('section')];
+  const pageno = document.getElementById('pageno');
+  let cur = Math.min(Math.max((parseInt(location.hash.slice(1)) || 1) - 1, 0), slides.length - 1);
+
+  function show(n) {
+    cur = Math.min(Math.max(n, 0), slides.length - 1);
+    slides.forEach((s, i) => s.classList.toggle('current', i === cur));
+    pageno.textContent = (cur + 1) + ' / ' + slides.length;
+    history.replaceState(null, '', '#' + (cur + 1));
+    fit();
+  }
+  // 画面幅に合わせて 1280x720 を等倍縮尺
+  function fit() {
+    const scale = Math.min(innerWidth / 1320, innerHeight / 760, 1);
+    slides[cur].style.transform = 'scale(' + scale + ')';
+  }
+  addEventListener('resize', fit);
+  addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') show(cur + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(cur - 1);
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+  addEventListener('click', e => { if (!e.target.closest('a, .navbtn')) show(cur + 1); });
+
+  // ---- 戻る/進むボタン（標準装備・js が自動で生成する） ----
+  for (const [id, label, step] of [['prevbtn', '← 戻る', -1], ['nextbtn', '次へ →', 1]]) {
+    const b = document.createElement('button');
+    b.id = id; b.className = 'navbtn'; b.textContent = label;
+    b.addEventListener('click', e => { e.stopPropagation(); show(cur + step); });
+    document.body.appendChild(b);
+  }
+  show(cur);
+
+</script>
+</body>
+</html>

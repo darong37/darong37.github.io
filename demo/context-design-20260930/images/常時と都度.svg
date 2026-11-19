@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 520" font-family="'IBM Plex Sans JP','Noto Sans JP',sans-serif">
+  <text x="620" y="46" font-size="34" font-weight="700" fill="#1b2a4a" text-anchor="middle">同じ内容でも、どちらに置くかで値段が変わる</text>
+
+  <g transform="translate(80,100)">
+    <rect x="0" y="0" width="500" height="330" rx="10" fill="#fbe9e4" stroke="#c0392b" stroke-width="3"/>
+    <text x="250" y="58" font-size="34" font-weight="700" fill="#c0392b" text-anchor="middle">常時</text>
+    <text x="250" y="102" font-size="27" fill="#8c3b28" text-anchor="middle">毎ターン、必ず乗る</text>
+    <g font-size="26" fill="#3a4a66">
+      <text x="42" y="156">CLAUDE.md</text>
+      <text x="42" y="200">スキルの前書き一覧</text>
+      <text x="42" y="244">エージェントの定義</text>
+    </g>
+    <text x="250" y="300" font-size="29" font-weight="700" fill="#c0392b" text-anchor="middle">1万増やすと、全ターンに1万</text>
+  </g>
+
+  <g transform="translate(660,100)">
+    <rect x="0" y="0" width="500" height="330" rx="10" fill="#e6f3ec" stroke="#1d7a4f" stroke-width="3"/>
+    <text x="250" y="58" font-size="34" font-weight="700" fill="#1d7a4f" text-anchor="middle">都度</text>
+    <text x="250" y="102" font-size="27" fill="#276b4c" text-anchor="middle">そのときだけ乗る</text>
+    <g font-size="26" fill="#3a4a66">
+      <text x="42" y="156">参照ドキュメント</text>
+      <text x="42" y="200">読んだコード・出力</text>
+      <text x="42" y="244">スキルの本体</text>
+    </g>
+    <text x="250" y="300" font-size="29" font-weight="700" fill="#1d7a4f" text-anchor="middle">要る日だけ払う</text>
+  </g>
+</svg>

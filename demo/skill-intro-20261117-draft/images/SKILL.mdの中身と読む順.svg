@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 690" width="660" height="690" font-family="Hiragino Sans, Noto Sans JP, sans-serif">
+  <text x="20" y="30" font-size="22" font-weight="700" fill="#5b6475">SKILL.md の中身（実物の形）</text>
+  <rect x="16" y="42" width="400" height="636" rx="10" fill="#f4f6f8" stroke="#c4cad3"/>
+  <rect x="22" y="48" width="388" height="206" rx="6" fill="#eaf2fc"/>
+  <rect x="22" y="262" width="388" height="170" rx="6" fill="#eceff3"/>
+  <rect x="22" y="440" width="388" height="232" rx="6" fill="#fff6d6"/>
+  <g font-family="Menlo, Consolas, Noto Sans Mono CJK JP, monospace" font-size="19" fill="#1d2330">
+    <text x="34" y="80" fill="#7a828f">---</text>
+    <text x="34" y="112"><tspan font-weight="700">name:</tspan> commit-message</text>
+    <text x="34" y="146"><tspan font-weight="700">description:</tspan></text>
+    <text x="34" y="176">コミットの文を決まりどおりに</text>
+    <text x="34" y="204">書く。コミットを作る・直す</text>
+    <text x="34" y="232">時に使う。</text>
+    <text x="34" y="290" fill="#7a828f">---</text>
+    <text x="34" y="332" font-weight="700"># コミットの文の書き方</text>
+    <text x="34" y="368">1. 1 行目に変えた事を短く</text>
+    <text x="34" y="400">2. …</text>
+    <text x="34" y="478">詳しい例が要る時は</text>
+    <text x="34" y="508" font-weight="700">references/examples.md</text>
+    <text x="34" y="538">を読む。</text>
+    <text x="34" y="584">整える時は</text>
+    <text x="34" y="614" font-weight="700">scripts/format.py</text>
+    <text x="34" y="644">を動かす。</text>
+  </g>
+  <g font-size="18">
+    <path d="M424 52 L434 52 L434 250 L424 250" stroke="#2a78d6" stroke-width="2.5" fill="none"/>
+    <text x="444" y="116" font-size="21" font-weight="700" fill="#2a78d6">いつも読む</text>
+    <text x="444" y="146" fill="#1d2330">名前と説明だけ</text>
+    <text x="444" y="172" fill="#1d2330">（1 つ約 100 トークン）</text>
+    <text x="444" y="202" font-size="16" fill="#b07a00">説明＝何をするか</text>
+    <text x="444" y="224" font-size="16" fill="#b07a00">＋いつ使うか</text>
+    <path d="M424 266 L434 266 L434 428 L424 428" stroke="#8a94a0" stroke-width="2.5" fill="none"/>
+    <text x="444" y="340" font-size="21" font-weight="700" fill="#1d2330">当たった時に読む</text>
+    <text x="444" y="370" fill="#5b6475">本文の手順</text>
+    <path d="M424 444 L434 444 L434 668 L424 668" stroke="#e0a800" stroke-width="2.5" fill="none"/>
+    <text x="444" y="534" font-size="21" font-weight="700" fill="#b07a00">指された時だけ</text>
+    <text x="444" y="564" fill="#1d2330">資料を読む</text>
+    <text x="444" y="590" fill="#1d2330">スクリプトを動かす</text>
+  </g>
+</svg>

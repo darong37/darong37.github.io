@@ -1,0 +1,29 @@
+/* 例外の枚（3〜6枚目「前回のおさらい」）だけに効くスタイル。
+   前の版（持ち込み・1920×1080 のアートボード）をそのまま引用しているので、
+   トンマナの顔ぶれではなく、当時の CSS 変数とインラインスタイルで成り立っている。
+   トンマナを替えてもこの5枚は変わらない——それが狙い（前回で閉じた話なので、前回の姿のまま見せる）。
+   置き場が css/ でもトンマナの use.sh に消されない（use.sh が消すのは前のトンマナが持っていた物だけ）。 */
+
+section.legacy {
+  /* 当時のアートボードの実寸（1920×1080）で書かれている。
+     zoom で 2/3 に縮めて、ほかの枚と同じ 1280×720 の見かけに揃える——
+     こうすれば送りの縮尺は全公演共通の標準品（1280×720 前提・上限1倍）のままでよい。 */
+  width: 1920px; height: 1080px; zoom: 0.6666667;
+  padding: 0; gap: 0;
+  overflow: hidden;
+
+  /* 当時のヘルメット（:root）から回収した値 */
+  --t-title: 64px; --t-sub: 44px; --t-body: 34px; --t-small: 28px; --t-mono: 26px;
+  --px: 100px; --pt: 96px; --pb: 80px; --gap-title: 52px; --gap-item: 26px;
+  --ink: #14181D; --mid: #3C444D; --mut: #6B747E; --rule: #C6CDD4; --bg: #F4F6F8;
+  --panel: #FFFFFF; --dark: #2A31A8;
+  --strong: #8C959E; --indigo: #2A31A8; --cyan: #33B1C1; --pale: #E8EDF6; --sunk: #EAEEF2;
+  /* デザインシステム（_ds）由来 */
+  --stf-ground: #F4F6F8; --stf-indigo: #2A31A8; --stf-ink: #14181D; --stf-line-strong: #8C959E;
+}
+section.legacy.current { display: flex; }
+
+/* 引用した枚はインラインスタイルに display:flex を持っているので、
+   クラスだけの指定では隠れない。!important で隠す（当時の css と同じ手当て）。 */
+.deck > section.legacy:not(.current) { display: none !important; }
+

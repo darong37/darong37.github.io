@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta name="publish-date" content="2026-11-17">
+<title>スキル入門（試作）</title>
+<meta name="robots" content="noindex">
+<meta name="published" content="2026-11-19 10:25:25">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="css/style.css"></head><body>
+<div class="deck" id="deck">
+
+<!-- 1 表紙 -->
+<section class="slide cover full">
+  <div class="text">
+    <div class="ch">導入</div>
+    <h1>スキル入門</h1>
+    <div class="sub">必要になった時に、その手順だけ読む</div>
+    <h3>この資料で分かること</h3>
+    <ul>
+      <li>スキルとは何か、その中身</li>
+      <li>ちゃんと呼ばれるような決め方</li>
+      <li>話して作って、育てる進め方</li>
+    </ul>
+  </div>
+  <div class="src">出典：Anthropic・Claude Code・Agent Skills の公式ドキュメント</div>
+</section>
+
+<!-- 2 なぜ要るのか -->
+<section class="slide">
+  <div class="text roomy">
+    <div class="ch">導入｜なぜ要るのか</div>
+    <h2 class="h37">同じ手順を、毎回指示し直していませんか？</h2>
+    <h3>■ よくある困りごと</h3>
+    <ul>
+      <li>書式・手順・社内の決まりを、頼むたびに指示し直す</li>
+      <li>指示が 1 つ抜けると、出来がばらつく</li>
+    </ul>
+    <div class="key">手順をまとめておけば、毎回言わなくていい</div>
+  </div>
+  <div class="fig"><img src="images/同じ説明から手順書をひらめく.webp" alt="上: 新人が見積書の書き方をもう一度聞き、先輩が同じ説明をくり返す。下: 先輩が「そうだ、手順書にまとめてみよう！」とひらめく"></div>
+  <div class="src">出典：Anthropic「Agent Skills」・公式ガイド</div>
+</section>
+
+<!-- 3 スキルとは -->
+<section class="slide half">
+  <div class="text">
+    <div class="ch">導入｜スキルとは</div>
+    <h2 class="h38">必要な時だけ読む SKILL.md</h2>
+    <h3>■ 読む順</h3>
+    <ul>
+      <li><b>いつも</b>：名前と説明だけ（1 つ約 100 トークン）</li>
+      <li><b>頼みに当たったら</b>：本文の手順</li>
+      <li><b>本文が指した時だけ</b>：資料を読む・スクリプトを動かす</li>
+    </ul>
+    <div class="key">たくさん入れても、文脈が埋まらない</div>
+  </div>
+  <div class="fig"><img class="diagram" src="images/SKILL.mdの中身と読む順.svg" alt="SKILL.md の中身——上（青）の名前と説明は「いつも読む」、中（灰）の本文は「当たった時に読む」、下（黄）の資料とスクリプトへの指しは「指された時だけ」"></div>
+  <div class="src">出典：Anthropic「Agent Skills」・agentskills.io の仕様</div>
+</section>
+
+<!-- 4 呼ばれ方 -->
+<section class="slide full">
+  <div class="text">
+    <div class="ch">展開｜呼ばれ方</div>
+    <h2>ちゃんと呼ばれるように決める</h2>
+    <h3>■ 決める 2 つ</h3>
+    <ul>
+      <li>description に、<b>何をするか</b>・<b>いつ使うか</b></li>
+      <li>いつも読む所（CLAUDE.md・手順）から「この時はこのスキル」と指す</li>
+    </ul>
+    <h3>■ Vercel の試験（新しい API を使えるか）</h3>
+    <table class="z">
+      <colgroup><col class="w72"><col class="w28"></colgroup>
+      <tr><th>置き方</th><th>合格率</th></tr>
+      <tr><td>スキルを置いただけ（56% の件で呼ばれず）</td><td class="n">53%</td></tr>
+      <tr><td>スキル＋「使え」と指示</td><td class="n">79%</td></tr>
+      <tr class="hl"><td>いつも読む所に資料の索引</td><td class="n">100%</td></tr>
+    </table>
+  </div>
+  <div class="src">出典：Anthropic のドキュメント・Vercel ブログ（2026-01-27）</div>
+</section>
+
+<!-- 5 作り方 -->
+<section class="slide">
+  <div class="text roomy">
+    <div class="ch">展開｜作り方</div>
+    <h2 class="h36w">話すだけで作れる——<br>気軽に作って、気軽に使おう</h2>
+    <h3>■ 作る</h3>
+    <ul>
+      <li>スキルを作るスキル（skill-creator）がある</li>
+      <li>「こういうスキルを作って」と話すだけで決まる</li>
+    </ul>
+    <h3>■ 使う</h3>
+    <ul>
+      <li>公開されているスキルも、気軽に入れてよい</li>
+      <li>入れる時は、中身にひと通り目を通す</li>
+    </ul>
+  </div>
+  <div class="fig"><img src="images/話して手順書を作ってもらう.webp" alt="先輩が机から「こういう手順書を作って」と話しかけ、同僚が「はい、書いておきますね」と手順書を書き込んでいく。先輩の机には別の手順書が開かれ、ひと通りめくって確かめている"></div>
+  <div class="src">出典：Anthropic の公開スキル集・Codex のドキュメント・Claude ブログ</div>
+</section>
+
+<!-- 6 育て方 -->
+<section class="slide half">
+  <div class="text">
+    <div class="ch">展開｜育て方</div>
+    <h2>使いながら育てる</h2>
+    <h3>■ 見るのは人</h3>
+    <ul>
+      <li>思った通りの答えが出たか</li>
+      <li>ずれていたら、話して直してもらう</li>
+    </ul>
+    <div class="key">フィードバックするのは、人</div>
+  </div>
+  <div class="fig"><img class="ring" src="images/スキルを育てる輪.webp" alt="スキルを育てる輪——① 決める（話して作る）② 使う（ふだんの仕事で）③ 人が見る（思った通りか）④ 直す（話して直してもらう）を時計回りの矢印で回す"></div>
+  <div class="src">出典：Anthropic 公式ガイド・agentskills.io</div>
+</section>
+
+<!-- 7 まとめ -->
+<section class="slide full">
+  <div class="text">
+    <div class="ch">まとめ</div>
+    <h2>覚えて帰る 3 つ</h2>
+    <div class="cards">
+      <div class="card"><div class="num">1</div><div class="t">スキルは、必要な時だけ読む SKILL.md<small>いつも読むのは、名前と説明だけ</small></div></div>
+      <div class="card"><div class="num">2</div><div class="t">呼ばれるように、セットで決める<small>description と、まわりの指示（CLAUDE.md・手順）</small></div></div>
+      <div class="card"><div class="num">3</div><div class="t">話して作って、使いながら人が育てる<small>フィードバックするのは、人</small></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 おまけ 1 4 コマ漫画 -->
+<section class="slide ig"><img src="images/まとめの4コマ漫画.webp" alt="おまけの 4 コマ漫画——同じ手順を毎回教えてぐったり → 手順書にまとめ表紙に「見積書を作る時に開く」→ 新人が自分で開いてできる → 2 人で落とし穴を書き足す"></section>
+
+<!-- 9 おまけ 2 違い -->
+<section class="slide">
+  <div class="text roomy">
+    <div class="ch">おまけ｜違い</div>
+    <h2>MCP とスキルは、セットで使う</h2>
+    <h3>■ MCP——取扱説明書</h3>
+    <ul><li>道具で何ができるか・どう動かすか</li></ul>
+    <h3>■ スキル——レシピ</h3>
+    <ul><li>何を、どの順で作るか</li></ul>
+    <h3>■ CLAUDE.md</h3>
+    <ul><li>いつも守る事（毎回必ず読む）</li></ul>
+    <div class="key">道具の使い方と、作り方の手順はセット</div>
+  </div>
+  <div class="fig"><img src="images/取扱説明書とレシピ本.webp" alt="上: 取扱説明書を見ながら調理器の操作（煮る・蒸す・炊く）を知る。下: 肉じゃがのレシピ本の手順どおりに、調理器で作る"></div>
+  <div class="src">出典：Anthropic 公式ガイド・Claude Code のドキュメント</div>
+</section>
+
+<!-- 10 おまけ 3 置き場所 -->
+<section class="slide half">
+  <div class="text">
+    <div class="ch">おまけ｜置き場所</div>
+    <h2 class="h36w">置き場所で、<br>効く範囲が変わる</h2>
+    <h3>■ ホームの下</h3>
+    <ul><li>自分の全部のプロジェクトに効く</li></ul>
+    <h3>■ リポジトリの下</h3>
+    <ul><li>そのリポジトリだけに効く</li></ul>
+    <h3>■ プラグイン</h3>
+    <ul><li>入れた人みんなに効く</li></ul>
+    <div class="key s22">claude.ai・API・Claude Code の間では同期しない</div>
+  </div>
+  <div class="fig"><img class="diagram" src="images/置き場所で効く範囲が変わる.svg" alt="入れ子の箱——ホームの下に置いたスキル X はリポジトリ A にも B にも効き、リポジトリ A の下に置いたスキル Y は A の中だけに効く"></div>
+  <div class="src">出典：Claude Code のドキュメント・Anthropic のドキュメント（Claude Code の場合）</div>
+</section>
+
+</div>
+<div class="pageno" id="pageno"></div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

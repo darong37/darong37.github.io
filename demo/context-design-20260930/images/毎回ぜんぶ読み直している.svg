@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 660" font-family="'IBM Plex Sans JP','Noto Sans JP',sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0 0 L12 6 L0 12 z" fill="#c0392b"/>
+    </marker>
+  </defs>
+
+  <g transform="translate(60,90)">
+    <text x="0" y="0" font-size="34" font-weight="700" fill="#1b2a4a">1回目</text>
+    <rect x="0" y="24" width="230" height="70" rx="6" fill="#dfe6f2" stroke="#8ea3c8" stroke-width="2"/>
+    <text x="115" y="68" font-size="26" fill="#3a4a66" text-anchor="middle" font-weight="600">前置き</text>
+    <rect x="0" y="102" width="230" height="46" rx="6" fill="#fbe6e0" stroke="#d99b8c" stroke-width="2"/>
+    <text x="115" y="133" font-size="24" fill="#8c3b28" text-anchor="middle">いまの発言</text>
+    <text x="115" y="200" font-size="30" font-weight="700" fill="#c0392b" text-anchor="middle">4万</text>
+  </g>
+
+  <g transform="translate(430,90)">
+    <text x="0" y="0" font-size="34" font-weight="700" fill="#1b2a4a">10回目</text>
+    <rect x="0" y="24" width="230" height="70" rx="6" fill="#dfe6f2" stroke="#8ea3c8" stroke-width="2"/>
+    <text x="115" y="68" font-size="26" fill="#3a4a66" text-anchor="middle" font-weight="600">前置き</text>
+    <rect x="0" y="102" width="230" height="150" rx="6" fill="#eef2f8" stroke="#8ea3c8" stroke-width="2"/>
+    <text x="115" y="186" font-size="26" fill="#3a4a66" text-anchor="middle">これまでの会話</text>
+    <rect x="0" y="260" width="230" height="46" rx="6" fill="#fbe6e0" stroke="#d99b8c" stroke-width="2"/>
+    <text x="115" y="291" font-size="24" fill="#8c3b28" text-anchor="middle">いまの発言</text>
+    <text x="115" y="358" font-size="30" font-weight="700" fill="#c0392b" text-anchor="middle">8万</text>
+  </g>
+
+  <g transform="translate(800,90)">
+    <text x="0" y="0" font-size="34" font-weight="700" fill="#1b2a4a">30回目</text>
+    <rect x="0" y="24" width="230" height="70" rx="6" fill="#dfe6f2" stroke="#8ea3c8" stroke-width="2"/>
+    <text x="115" y="68" font-size="26" fill="#3a4a66" text-anchor="middle" font-weight="600">前置き</text>
+    <rect x="0" y="102" width="230" height="330" rx="6" fill="#eef2f8" stroke="#8ea3c8" stroke-width="2"/>
+    <text x="115" y="276" font-size="26" fill="#3a4a66" text-anchor="middle">これまでの会話</text>
+    <rect x="0" y="440" width="230" height="46" rx="6" fill="#fbe6e0" stroke="#d99b8c" stroke-width="2"/>
+    <text x="115" y="471" font-size="24" fill="#8c3b28" text-anchor="middle">いまの発言</text>
+    <text x="115" y="538" font-size="30" font-weight="700" fill="#c0392b" text-anchor="middle">16万</text>
+  </g>
+
+  <path d="M300 200 L420 200" stroke="#c0392b" stroke-width="4" marker-end="url(#ar)"/>
+  <path d="M670 280 L790 280" stroke="#c0392b" stroke-width="4" marker-end="url(#ar)"/>
+  <text x="620" y="46" font-size="34" font-weight="700" fill="#c0392b" text-anchor="middle">毎回、この山ぜんぶを読み直している</text>
+</svg>
