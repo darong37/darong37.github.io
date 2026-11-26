@@ -1,0 +1,385 @@
+<meta name="publish-date" content="2026-11-23">
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="published" content="2026-11-23 18:08:10">
+<title>AG03MK2 で Mac の音とマイクの声を Teams へ流す</title>
+<style>
+body{font-family:-apple-system,"Hiragino Sans","Noto Sans CJK JP",sans-serif;background:#fff;color:#222;margin:12px;max-width:760px;font-size:13px}
+h1{font-size:17px;margin:0 0 4px} h2{font-size:15px;margin:16px 0 4px} p{font-size:12px;margin:4px 0;color:#555}
+.lead{font-size:14px;color:#222;margin:4px 0 8px}
+.facts{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+.facts span{font-size:12px;background:#f4f6f8;border-radius:4px;padding:2px 8px}
+.chip{font-size:12px;border-radius:4px;padding:1px 8px;white-space:nowrap;border:1px solid}
+.chip.pic{color:#2a78d6;border-color:#2a78d6;background:#eaf2fc}
+.chip.nopic{color:#eb6834;border-color:#eb6834;background:#fdf0e6}
+.chip.new{color:#2a8a45;border-color:#2a8a45;background:#e9f6ec}
+.fold{text-align:right;margin:4px 0}
+.fold button{font:inherit;font-size:12px;color:#222;border:1px solid #bbb;background:#f4f6f8;border-radius:4px;padding:2px 8px;cursor:pointer}
+details.step{border:1px solid #bbb;border-radius:8px;margin:6px 0;background:#fff}
+details.step>summary{cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:10px;list-style:none}
+details.step>summary::-webkit-details-marker{display:none}
+details.step>summary::before{content:"▶";font-size:12px;color:#8a94a0}
+details.step[open]>summary::before{content:"▼"}
+details.step[open]>summary{border-bottom:1px solid #bbb;background:#f4f6f8}
+.no{font-size:15px;font-weight:700;color:#2a78d6}
+.act{font-size:15px;font-weight:700;flex:1}
+.how{padding:10px 14px 12px 34px}
+.kv{font-size:13px;margin:6px 0}
+.kv>div{display:grid;grid-template-columns:72px 1fr;gap:10px;line-height:1.7}
+.kv b{color:#555}
+svg.shot{display:block;margin:6px 0 4px;border:1px solid #bbb;border-radius:6px;max-width:100%}
+.noshot{border:1px dashed #eb6834;border-radius:6px;padding:8px 10px;font-size:12px;color:#222;background:#fdf0e6;margin:6px 0}
+details.trouble{margin:8px 0 0;border-left:3px solid #eb6834;padding-left:8px}
+details.trouble>summary{cursor:pointer;font-size:13px;font-weight:700;padding:2px 0}
+details.trouble p{font-size:13px;color:#222;margin:4px 0}
+.done{border:1px solid #2a8a45;border-radius:8px;padding:8px 12px;margin:10px 0;font-size:13px;background:#e9f6ec}
+table{border-collapse:collapse;width:100%;margin:4px 0;table-layout:fixed;font-size:12px}
+th,td{border:1px solid #bbb;padding:4px 6px;text-align:left;vertical-align:middle}
+thead th{background:#f4f6f8;font-weight:700;border-bottom:2px solid #8a94a0}
+</style><h1>AG03MK2 で Mac の音とマイクの声を Windows の Teams へ流す</h1>
+<p class="lead">RØDE の声と Mac のスライドの音声を、AG03MK2 経由で dynabook の Teams へ届ける。</p>
+<div class="facts"><span>段 8 つ</span><span>字は mmsys.cpl だけ</span><span>機械: Mac・RØDE・AG03MK2・dynabook</span><span>通した 2 回（段 1〜8 すべて済んだ）</span></div>
+<p class="fold"><button onclick="document.querySelectorAll('details.step').forEach(d=>{d.open=false})">全部畳む</button> <button onclick="document.querySelectorAll('details.step').forEach(d=>{d.open=true})">全部開く</button></p>
+
+<details class="trouble" open><summary>決めた形（11-23）</summary>
+<table>
+  <colgroup><col style="width:44%"><col style="width:30%"><col style="width:26%"></colgroup>
+  <thead><tr><th>どこ</th><th>決めた位置</th><th>載っている段</th></tr></thead>
+  <tbody>
+    <tr><td>配線</td><td>RØDE のヘッドホンの穴 → AG03MK2 の AUX</td><td>段 3</td></tr>
+    <tr><td>AG03MK2 の前面</td><td>INPUT MIX・MIX MINUS 切・MUTE 入・つまみ全部 5</td><td>段 2</td></tr>
+    <tr><td>Mac の音の出口</td><td>RØDE NT-USB+</td><td>段 4</td></tr>
+    <tr><td>Mac の出力の音量（解説の声）</td><td>50</td><td>段 4</td></tr>
+    <tr><td>Mac の入力の大きさ（RØDE の感度）</td><td>50</td><td>段 4</td></tr>
+    <tr><td>RØDE の上のつまみ（混ぜ具合）</td><td>まん中</td><td>段 4</td></tr>
+    <tr><td>RØDE の下のつまみ（穴の音量）</td><td>7</td><td>段 4</td></tr>
+    <tr><td>dynabook の AG03MK2 の録音のレベル</td><td>54</td><td>段 5</td></tr>
+    <tr><td>Teams</td><td>マイク AG03MK2・スピーカー Realtek</td><td>段 6</td></tr>
+  </tbody>
+</table>
+<p>どこも 100 を使い切らず、まん中から好みに合わせる。</p>
+</details>
+
+<details class="trouble"><summary>音の通り道</summary>
+<svg viewBox="0 0 720 220" width="100%" role="img" aria-label="音の通り道。Mac から RØDE、AG03MK2、dynabook の Teams へ">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#555"/></marker></defs>
+  <g font-size="15" text-anchor="middle" fill="#222">
+    <rect x="10" y="30" width="120" height="60" rx="8" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/><text x="70" y="56">Mac</text><text x="70" y="76">スライドの音声</text>
+    <rect x="180" y="30" width="140" height="60" rx="8" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/><text x="250" y="56">RØDE NT-USB+</text><text x="250" y="76">あなたの声と混ぜる</text>
+    <rect x="370" y="30" width="140" height="60" rx="8" fill="#f4f6f8" stroke="#8a94a0" stroke-width="2"/><text x="440" y="56">AG03MK2</text><text x="440" y="76">使う時だけ電源</text>
+    <rect x="560" y="30" width="150" height="60" rx="8" fill="#f1edf9" stroke="#7a5cc2" stroke-width="2"/><text x="635" y="56">dynabook</text><text x="635" y="76">Teams のマイク</text>
+  </g>
+  <g stroke="#555" stroke-width="2" fill="none" marker-end="url(#ah)">
+    <path d="M130 60 H176"/><path d="M320 60 H366"/><path d="M510 60 H556"/>
+  </g>
+  <g font-size="13" fill="#555" text-anchor="middle">
+    <text x="153" y="115">USB</text><text x="343" y="115">ヘッドホンの穴</text><text x="343" y="132">→ AUX</text><text x="533" y="115">USB</text>
+  </g>
+  <text x="360" y="185" font-size="15" text-anchor="middle" fill="#d03b3b" font-weight="700">AG03MK2 の電源を切れば、dynabook への道は切れる</text>
+  <text x="360" y="207" font-size="13" text-anchor="middle" fill="#555">RØDE は Mac のマイクとして、いつも通り使える</text>
+</svg>
+</details>
+
+<h2>つなぐ・合わせる（1 回だけ）</h2>
+
+<details class="step">
+  <summary><span class="no">1</span><span class="act">AG03MK2 を USB で dynabook へつなぎ、電源を入れる</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <svg class="shot" viewBox="250 400 400 260" width="100%" role="img" aria-label="AG03MK2 の裏。USB 2.0 の穴に赤い枠">
+      <image href="画像/裏.webp" x="0" y="0" width="750" height="1000"/>
+      <rect x="385" y="495" width="150" height="100" rx="8" fill="none" stroke="#d03b3b" stroke-width="4"/>
+      <rect x="295" y="485" width="85" height="80" rx="8" fill="none" stroke="#888" stroke-width="3" stroke-dasharray="8 5"/>
+    </svg>
+    <div class="kv"><div><b>どこ</b>AG03MK2 の裏</div><div><b>何を</b>右の「USB 2.0」の穴（赤い枠）</div><div><b>どうする</b>dynabook の USB とケーブルでつなぐ</div><div><b>出る物</b>左の「5V DC」（灰色の点線）は使わない</div></div>
+    <svg class="shot" viewBox="380 370 300 200" width="100%" role="img" aria-label="AG03MK2 の前。電源スイッチに赤い枠">
+      <image href="画像/前面-初め.webp" x="0" y="0" width="750" height="1000"/>
+      <rect x="485" y="438" width="128" height="60" rx="8" fill="none" stroke="#d03b3b" stroke-width="4"/>
+    </svg>
+    <div class="kv"><div><b>どこ</b>前の「AG03」の字の下</div><div><b>何を</b>黒い四角のスイッチ（右に ⏻ の印）</div><div><b>どうする</b>1 回押して入れる</div><div><b>出る物</b>スイッチの窓が白くなる</div></div>
+    <svg class="shot" viewBox="0 380 696 150" width="100%" role="img" aria-label="録音タブの AG03MK2 の行に赤い枠">
+      <image href="画像/録音タブ.webp" x="0" y="0" width="696" height="776"/>
+      <rect x="38" y="425" width="612" height="80" rx="6" fill="none" stroke="#d03b3b" stroke-width="4"/>
+    </svg>
+    <div class="kv"><div><b>どこ</b>dynabook</div><div><b>何を</b>Win+R → mmsys.cpl → 「録音」タブ</div><div><b>どうする</b>行の並びを見る</div><div><b>出る物</b>「マイク 2- Yamaha AG03MK2」の行（赤い枠）</div></div>
+    <details class="trouble"><summary>つまずいた時——出入りの穴の見分けが付かない <span class="chip new">1 回目に足した</span></summary>
+      <p>穴の横の絵で見分ける。<br>マイク・ギター・鍵盤の絵は入力、スピーカー・ヘッドホンの絵は出力。</p>
+    </details>
+    <details class="trouble"><summary>つまずいた時——電源は 5V DC から取るのか <span class="chip new">1 回目に足した</span></summary>
+      <p>dynabook の USB の電源だけで動く。<br>窓が白くならない時だけ、5V DC に USB の電源アダプターをつなぐ。</p>
+    </details>
+  </div>
+</details>
+
+<details class="step">
+  <summary><span class="no">2</span><span class="act">AG03MK2 の前面の切り替えを合わせる</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <svg class="shot" viewBox="180 560 540 390" width="100%" role="img" aria-label="AG03MK2 の前（合わせた後）。6 か所に赤い枠と番号">
+      <image href="画像/前面-合わせた後.webp" x="0" y="0" width="750" height="1000"/>
+      <g fill="none" stroke="#d03b3b" stroke-width="4">
+        <rect x="345" y="655" width="135" height="85" rx="8"/>
+        <rect x="560" y="585" width="62" height="45" rx="8"/>
+        <rect x="250" y="680" width="65" height="45" rx="8"/>
+        <rect x="385" y="810" width="92" height="100" rx="10"/>
+        <rect x="565" y="665" width="105" height="110" rx="10"/>
+        <rect x="570" y="800" width="102" height="105" rx="10"/>
+      </g>
+      <g font-size="30" font-weight="700" fill="#d03b3b" stroke="#fff" stroke-width="6" paint-order="stroke">
+        <text x="345" y="648">①</text><text x="628" y="600">②</text><text x="212" y="715">③</text>
+        <text x="345" y="935">④</text><text x="676" y="730">⑤</text><text x="676" y="860">⑥</text>
+      </g>
+    </svg>
+    <table>
+      <colgroup><col style="width:8%"><col style="width:46%"><col style="width:46%"></colgroup>
+      <thead><tr><th>印</th><th>どこ</th><th>どうする</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td>STREAMING OUT の小さいレバー</td><td>まん中の INPUT MIX</td></tr>
+        <tr><td>②</td><td>MIX MINUS のボタン</td><td>押されていない形</td></tr>
+        <tr><td>③</td><td>CH1 の MUTE（赤いボタン）</td><td>赤い灯りが点いた形（CH1 は使わない）</td></tr>
+        <tr><td>④</td><td>パソコンとスマホの絵のつまみ</td><td>まん中（5）</td></tr>
+        <tr><td>⑤</td><td>MONITOR の上のつまみ</td><td>まん中（5）</td></tr>
+        <tr><td>⑥</td><td>MONITOR の下のつまみ</td><td>まん中（5）</td></tr>
+      </tbody>
+    </table>
+    <p><b>この形で固定する</b><br>以後は触らない。</p>
+  </div>
+</details>
+
+<details class="step">
+  <summary><span class="no">3</span><span class="act">RØDE のヘッドホンの穴と AG03MK2 の AUX を、青いケーブルでつなぐ</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <svg class="shot" viewBox="320 480 300 160" width="100%" role="img" aria-label="AG03MK2 の前。AUX の穴に赤い枠">
+      <image href="画像/前面-合わせた後.webp" x="0" y="0" width="750" height="1000"/>
+      <rect x="424" y="548" width="52" height="52" rx="8" fill="none" stroke="#d03b3b" stroke-width="4"/>
+    </svg>
+    <svg class="shot" viewBox="0 0 1000 750" width="100%" role="img" aria-label="つないだ姿。RØDE のヘッドホンの穴と AG03MK2 の AUX に赤い枠">
+      <image href="画像/RØDE-AUX.webp" x="0" y="0" width="1000" height="750"/>
+      <rect x="705" y="200" width="85" height="95" rx="8" fill="none" stroke="#d03b3b" stroke-width="4"/>
+      <rect x="265" y="300" width="60" height="100" rx="8" fill="none" stroke="#d03b3b" stroke-width="4"/>
+      <g font-size="26" font-weight="700" fill="#d03b3b" stroke="#fff" stroke-width="6" paint-order="stroke"><text x="800" y="250">RØDE の穴</text><text x="150" y="430">AUX</text></g>
+    </svg>
+    <div class="kv"><div><b>どこ</b>RØDE NT-USB+ のヘッドホンの穴と、AG03MK2 の前の AUX の穴（赤い枠）</div><div><b>何を</b>AT344A/1.0（青い・両端が同じ 3.5mm）</div><div><b>どうする</b>今 Mac mini の前の穴に差している側を抜き、RØDE のヘッドホンの穴へ差す</div><div><b>出る物</b>まだ鳴らない</div></div>
+    <details class="trouble"><summary>つまずいた時——なぜ Mac mini の穴ではなく RØDE の穴か <span class="chip new">1 回目に足した</span></summary>
+      <p>Mac mini の穴から出るのは Mac が鳴らす音だけで、RØDE の声は出ない。<br>RØDE のヘッドホンの穴からは、あなたの声と Mac の音が混ざって出る。</p>
+    </details>
+  </div>
+</details>
+
+<details class="step">
+  <summary><span class="no">4</span><span class="act">音の大きさを決めた位置に合わせる（Mac・RØDE・dynabook）</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <table>
+      <colgroup><col style="width:46%"><col style="width:30%"><col style="width:24%"></colgroup>
+      <thead><tr><th>どこ</th><th>決めた位置</th><th>誰が</th></tr></thead>
+      <tbody>
+        <tr><td>Mac の音の出口</td><td>RØDE NT-USB+</td><td>私</td></tr>
+        <tr><td>Mac の出力の音量（解説の声の大きさ）</td><td>50</td><td>私</td></tr>
+        <tr><td>Mac の入力の大きさ（RØDE の感度）</td><td>50</td><td>私</td></tr>
+        <tr><td>RØDE の上のつまみ（混ぜ具合）</td><td>まん中</td><td>あなた</td></tr>
+        <tr><td>RØDE の下のつまみ（穴の音量）</td><td>7（下の絵）</td><td>あなた</td></tr>
+        <tr><td>dynabook の AG03MK2 の録音のレベル</td><td>54（変えない）</td><td>—</td></tr>
+        <tr><td>AG03MK2 の ④ のつまみ</td><td>5（段 2 のまま）</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <svg class="shot" viewBox="280 300 400 300" width="100%" role="img" aria-label="RØDE の前のつまみ。下のつまみが 7〜8 の位置">
+      <image href="画像/RØDE-決めた位置.webp" x="0" y="0" width="750" height="1000"/>
+      <rect x="340" y="335" width="115" height="110" rx="10" fill="none" stroke="#2a78d6" stroke-width="4" stroke-dasharray="8 5"/>
+      <rect x="340" y="465" width="115" height="110" rx="10" fill="none" stroke="#d03b3b" stroke-width="5"/>
+      <g font-size="24" font-weight="700" stroke="#fff" stroke-width="6" paint-order="stroke"><text x="465" y="395" fill="#2a78d6">上: まん中</text><text x="465" y="525" fill="#d03b3b">下: 7</text></g>
+    </svg>
+    <p><b>この位置での目盛り（11-23）</b><br>ふつうの声で 1〜3、大きい声で 4。</p>
+    <p><b>上げるのは RØDE の下のつまみ</b><br>音のいちばん元で上げるので、雑音が増えにくい。<br>dynabook のレベルや ④ で上げるのは、それでも足りない時だけ。</p>
+    <div class="kv"><div><b>誰が</b>私（Claude）が Mac の設定で替える</div><div><b>どこ</b>Mac の音の出口（サウンドの出力）</div><div><b>どうする</b>「RØDE NT-USB+」を選び、音量を 100 にする</div><div><b>出る物</b>Mac の音は RØDE のヘッドホンの穴から出る</div></div>
+    <details class="trouble"><summary>つまずいた時——音量 50 では目盛りが動かなかった <span class="chip new">1 回目に足した</span></summary>
+      <p>音が小さく、dynabook の目盛りが 1 つも動かなかった。<br>100 にしたら、緑の 1〜2（一瞬 3）まで動いた。</p>
+    </details>
+  </div>
+</details>
+
+<h2>確かめる</h2>
+
+<details class="step">
+  <summary><span class="no">5</span><span class="act">RØDE に話し、dynabook の録音タブの目盛りを見る</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <svg class="shot" viewBox="0 380 696 150" width="100%" role="img" aria-label="録音タブの AG03MK2 の行。右端の目盛りに赤い枠">
+      <image href="画像/録音タブ.webp" x="0" y="0" width="696" height="776"/>
+      <rect x="608" y="420" width="46" height="80" rx="6" fill="none" stroke="#d03b3b" stroke-width="4"/>
+      <text x="520" y="470" font-size="26" font-weight="700" fill="#d03b3b" stroke="#fff" stroke-width="6" paint-order="stroke">ここだけ</text>
+    </svg>
+    <div class="kv"><div><b>どこ</b>dynabook の録音タブの「マイク 2- Yamaha AG03MK2」の行の右端</div><div><b>何を</b>縦に並んだ緑の目盛り（赤い枠）</div><div><b>どうする</b>RØDE に向かって話しながら見る</div><div><b>出る物</b>声に合わせて緑が上下する</div></div>
+    <details class="trouble"><summary>つまずいた時——目盛りが小さい（大きな声でも 1 にしか届かない） <span class="chip new">2 回目に足した</span></summary>
+      <p>音の元に近い所から順に上げる。<br>元で上げるほど、雑音が増えにくい。</p>
+      <table>
+        <colgroup><col style="width:8%"><col style="width:52%"><col style="width:40%"></colgroup>
+        <thead><tr><th>順</th><th>上げる所</th><th>11-23 の結果</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>RØDE の下のつまみ（穴の音量）を 7〜8 へ（1 枚目の絵）</td><td>これで足りた（ふつうの声で 1〜3）</td></tr>
+          <tr><td>2</td><td>Mac の入力の大きさ（RØDE の感度）を上げる（私がやる）</td><td>一度 100 にしたが、50 に戻して足りた</td></tr>
+          <tr><td>3</td><td>まだ小さい時だけ: dynabook の AG03MK2 の録音のレベル（2 枚目の絵）</td><td>変えていない（54 のまま）</td></tr>
+          <tr><td>4</td><td>それでも小さい時だけ: AG03MK2 の ④ のつまみ</td><td>変えていない（5 のまま）</td></tr>
+        </tbody>
+      </table>
+      <svg class="shot" viewBox="280 300 400 300" width="100%" role="img" aria-label="RØDE の前のつまみ。下のつまみが 7〜8 の位置">
+        <image href="画像/RØDE-決めた位置.webp" x="0" y="0" width="750" height="1000"/>
+        <rect x="340" y="335" width="115" height="110" rx="10" fill="none" stroke="#2a78d6" stroke-width="4" stroke-dasharray="8 5"/>
+        <rect x="340" y="465" width="115" height="110" rx="10" fill="none" stroke="#d03b3b" stroke-width="5"/>
+        <g font-size="24" font-weight="700" stroke="#fff" stroke-width="6" paint-order="stroke"><text x="465" y="395" fill="#2a78d6">上: まん中</text><text x="465" y="525" fill="#d03b3b">下: 音量 7〜8</text></g>
+      </svg>
+      <p>上のつまみ（マイク → ヘッドホンの絵）は、声と Mac の音の混ぜ具合。<br>まん中のままでよい。</p>
+      <svg class="shot" viewBox="0 0 696 770" width="100%" role="img" aria-label="マイクのプロパティのレベル。つまみと数字に赤い枠">
+        <image href="画像/録音のレベル.webp" x="0" y="0" width="696" height="770"/>
+        <rect x="60" y="150" width="285" height="45" rx="6" fill="none" stroke="#d03b3b" stroke-width="4"/>
+        <rect x="350" y="155" width="98" height="35" rx="6" fill="none" stroke="#d03b3b" stroke-width="4"/>
+        <text x="60" y="240" font-size="26" font-weight="700" fill="#d03b3b" stroke="#fff" stroke-width="6" paint-order="stroke">3 番: まだ小さい時だけ上げる</text>
+      </svg>
+      <p>2 枚目の画面の出し方: 録音タブで AG03MK2 の行を選び、「プロパティ」→「レベル」。</p>
+    </details>
+<details class="trouble"><summary>つまずいた時——RØDE に話しても目盛りが動かない <span class="chip new">2 回目に足した</span></summary>
+      <p>声が RØDE の穴から出ていないのか、RØDE の穴から何も出ていないのかを分ける。<br>私が Mac の音を鳴らし、同じ目盛りを見る。</p>
+      <table>
+        <colgroup><col style="width:40%"><col style="width:60%"></colgroup>
+        <thead><tr><th>Mac の音を鳴らした時</th><th>分かる事</th></tr></thead>
+        <tbody>
+          <tr><td>目盛りが動く</td><td>RØDE の穴から AUX までは通っている。<br>声だけが出ていない（RØDE の直接モニター）。</td></tr>
+          <tr><td>目盛りが動かない</td><td>RØDE の穴から何も出ていない。<br>RØDE のヘッドホンの音量のつまみを見る。</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </div>
+</details>
+
+<details class="step">
+  <summary><span class="no">6</span><span class="act">Teams のマイクを AG03MK2、スピーカーを dynabook 本体にする</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <svg class="shot" viewBox="640 280 800 540" width="100%" role="img" aria-label="Teams のデバイスの設定。スピーカーとマイクの選び箱に赤い枠">
+      <image href="画像/Teams-設定済み.webp" x="0" y="0" width="1453" height="1646"/>
+      <rect x="774" y="448" width="478" height="110" rx="8" fill="none" stroke="#d03b3b" stroke-width="5"/>
+      <rect x="774" y="690" width="478" height="112" rx="8" fill="none" stroke="#d03b3b" stroke-width="5"/>
+    </svg>
+    <table>
+      <colgroup><col style="width:24%"><col style="width:76%"></colgroup>
+      <thead><tr><th>選び箱</th><th>選ぶ物</th></tr></thead>
+      <tbody>
+        <tr><td>スピーカー</td><td>スピーカー (2- Realtek(R) Audio)——dynabook 本体のスピーカー</td></tr>
+        <tr><td>マイク</td><td>マイク (2- Yamaha AG03MK2)</td></tr>
+      </tbody>
+    </table>
+    <div class="kv"><div><b>どこ</b>Teams の右上の「…」→「設定」→ 左の「デバイス」</div></div>
+    <details class="trouble"><summary>つまずいた時——Realtek とは何か <span class="chip new">1 回目に足した</span></summary>
+      <p>dynabook の中の音の部品を作った会社の名前。<br>Windows は本体のスピーカーをこの名前で呼ぶ。</p>
+    </details>
+  </div>
+</details>
+
+<details class="step">
+  <summary><span class="no">7</span><span class="act">最終試験——音声付きの HTML を鳴らしながら話し、dynabook のスピーカーから両方が出るか</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <table>
+      <colgroup><col style="width:10%"><col style="width:45%"><col style="width:45%"></colgroup>
+      <thead><tr><th>順</th><th>やること</th><th>どこ</th></tr></thead>
+      <tbody>
+        <tr><td>7-1</td><td>音声付きの HTML を開いておく<br>（私が開く: 成果物/20261117_スキル入門.html・11-23 に開いた）</td><td>Mac のブラウザ</td></tr>
+        <tr><td>7-2</td><td>「テスト通話を開始」を押す</td><td>dynabook の Teams（下の絵の ③）</td></tr>
+        <tr><td>7-3</td><td>Teams の日本語の案内が終わったら「🔊 解説を聞く」を押す</td><td>Mac の HTML</td></tr>
+        <tr><td>7-4</td><td>解説が鳴っている間に、RØDE に向かって話す</td><td>RØDE</td></tr>
+        <tr><td>7-5</td><td>再生を聞く</td><td>dynabook 本体のスピーカー</td></tr>
+      </tbody>
+    </table>
+    <svg class="shot" viewBox="0 0 1000 597" width="100%" role="img" aria-label="Mac で開いた音声付きの HTML。解説を聞くボタンに赤い枠">
+      <image href="画像/音声付きHTML.webp" x="0" y="0" width="1000" height="597"/>
+      <rect x="498" y="564" width="100" height="33" rx="6" fill="none" stroke="#d03b3b" stroke-width="4"/>
+      <text x="610" y="590" font-size="24" font-weight="700" fill="#d03b3b" stroke="#fff" stroke-width="6" paint-order="stroke">7-3 ここ（Mac）</text>
+    </svg>
+    <svg class="shot" viewBox="0 0 1450 1424" width="100%" role="img" aria-label="Teams の設定のデバイス。テスト通話を開始に赤い枠">
+      <image href="画像/Teams-デバイス.webp" x="0" y="0" width="1450" height="1424"/>
+      <rect x="745" y="780" width="340" height="80" rx="8" fill="none" stroke="#d03b3b" stroke-width="6"/>
+      <text x="1100" y="840" font-size="44" font-weight="700" fill="#d03b3b" stroke="#fff" stroke-width="8" paint-order="stroke">③</text>
+    </svg>
+    <table>
+      <colgroup><col style="width:28%"><col style="width:72%"></colgroup>
+      <thead><tr><th>dynabook のスピーカー</th><th>何の音か</th></tr></thead>
+      <tbody>
+        <tr><td>Teams の日本語の声</td><td>Teams の Echo の案内。<br>聞こえてよい。</td></tr>
+        <tr><td>しばらく無音</td><td>Teams が録音している間。</td></tr>
+        <tr><td>解説の声とあなたの声</td><td>Teams が録った音の再生。<br>両方が混ざって聞こえれば通り。</td></tr>
+      </tbody>
+    </table>
+    <details class="trouble"><summary>つまずいた時——解説の声は大きいのに、あなたの声がとても小さい <span class="chip new">2 回目に足した</span></summary>
+      <p>まず Mac の出力の音量を 50 にする。<br>そのうえで RØDE の上のつまみ（混ぜ具合）を、右回り（時計回り）へ少しずつ回す。</p>
+      <p><b>向きの決まり（RØDE の説明書）</b><br>右回り（時計回り）へ回すほど、あなたの声が大きくなる。<br>左回りいっぱいにすると、あなたの声は消え、Mac の音だけになる。</p>
+      <table>
+        <colgroup><col style="width:30%"><col style="width:70%"></colgroup>
+        <thead><tr><th>Mac の出力の音量</th><th>11-23 の結果</th></tr></thead>
+        <tbody>
+          <tr><td>100</td><td>解説はよく聞こえ、あなたの声はとても小さい。</td></tr>
+          <tr><td>70</td><td>RØDE の上のつまみを右回りへ少し回し、少しよくなった。</td></tr>
+          <tr><td>50</td><td>上のつまみをまん中に戻して、ちょうどよかった。<br>これを決めた位置にした。</td></tr>
+        </tbody>
+      </table>
+      <svg class="shot" viewBox="280 300 400 300" width="100%" role="img" aria-label="RØDE の前の上のつまみに赤い枠">
+        <image href="画像/RØDE-決めた位置.webp" x="0" y="0" width="750" height="1000"/>
+        <rect x="340" y="335" width="115" height="110" rx="10" fill="none" stroke="#d03b3b" stroke-width="5"/>
+        <path d="M372 322 A62 62 0 0 1 452 340" fill="none" stroke="#d03b3b" stroke-width="5" marker-end="url(#cw)"/>
+        <defs><marker id="cw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L10,5L0,10z" fill="#d03b3b"/></marker></defs>
+        <rect x="340" y="465" width="115" height="110" rx="10" fill="none" stroke="#888" stroke-width="3" stroke-dasharray="8 5"/>
+        <g font-size="24" font-weight="700" stroke="#fff" stroke-width="6" paint-order="stroke"><text x="465" y="372" fill="#d03b3b">上: 右回りへ</text><text x="465" y="404" fill="#d03b3b">少しずつ</text><text x="465" y="525" fill="#555">下: 触らない</text></g>
+      </svg>
+    </details>
+    <details class="trouble"><summary>つまずいた時——Teams が録り始める前に Mac の音声が終わる <span class="chip new">1 回目に足した</span></summary>
+      <p>Echo は、押してから録り始めるまでに十数秒の案内がある。<br>だから「解説を聞く」は、Teams の日本語の案内が終わってから押す。</p>
+    </details>
+    <details class="trouble"><summary>つまずいた時——イヤホンで聞くと録れたか分からない <span class="chip new">1 回目に足した</span></summary>
+      <p>イヤホンには Mac の音がそのまま届き、録れた音と区別できない。<br>だから聞くのは dynabook 本体のスピーカー。</p>
+    </details>
+    <details class="trouble"><summary>つまずいた時——Teams の目盛りが振り切っている <span class="chip new">1 回目に足した</span></summary>
+      <p>Teams の「マイクの感度を自動的に調整する」がオンで、音を持ち上げて見せている。<br>本当に大きすぎる時は、AG03MK2 の PEAK の赤が点く。</p>
+    </details>
+  </div>
+</details>
+
+<details class="step">
+  <summary><span class="no">8</span><span class="act">AG03MK2 の電源を切って道が切れ、入れ直すと設定が戻るのを見る</span><span class="chip pic">絵あり</span><span class="chip new">済んだ</span></summary>
+  <div class="how">
+    <svg class="shot" viewBox="380 370 300 200" width="100%" role="img" aria-label="AG03MK2 の前。電源スイッチに赤い枠">
+      <image href="画像/前面-初め.webp" x="0" y="0" width="750" height="1000"/>
+      <rect x="485" y="438" width="128" height="60" rx="8" fill="none" stroke="#d03b3b" stroke-width="4"/>
+    </svg>
+    <table>
+      <colgroup><col style="width:10%"><col style="width:45%"><col style="width:45%"></colgroup>
+      <thead><tr><th>順</th><th>やること</th><th>見る所</th></tr></thead>
+      <tbody>
+        <tr><td>8-1</td><td>電源スイッチ（赤い枠）を押して切る</td><td>録音タブから AG03MK2 の行が消える（または「接続されていません」）</td></tr>
+        <tr><td>8-2</td><td>電源スイッチを押して入れ直す</td><td>録音タブの AG03MK2 の行が「既定のデバイス」に戻るか</td></tr>
+        <tr><td>8-3</td><td>Teams の「設定」→「デバイス」を開く</td><td>マイクが AG03MK2、スピーカーが Realtek のままか（段 6 の絵）</td></tr>
+      </tbody>
+    </table>
+    <p><b>戻らなかったら</b><br>録音タブで AG03MK2 を選び「既定値に設定」を押す。<br>Teams は段 6 のとおり選び直す。</p>
+  </div>
+</details>
+
+<details class="trouble"><summary>ふだんの使い方</summary>
+<table>
+  <colgroup><col style="width:26%"><col style="width:74%"></colgroup>
+  <thead><tr><th>いつ</th><th>やること</th></tr></thead>
+  <tbody>
+    <tr><td>会議の前</td><td>AG03MK2 の電源を入れる。</td></tr>
+    <tr><td>会議の中で声を止める</td><td>Teams のミュートを押す（スライドの音声も止まる）。</td></tr>
+    <tr><td>会議の後</td><td>AG03MK2 の電源を切る。<br>dynabook への道が切れる。</td></tr>
+  </tbody>
+</table>
+<div class="noshot">気を付ける事: 会議中に電源を切ると、Teams が dynabook 本体のマイクに替わることがある。<br>会議中は電源を入れたままにする。</div>
+<div class="noshot">気を付ける事: Mac の音の出口が RØDE なので、AG03MK2 の電源を切っている間は、Mac の音が聞こえない。<br>聞きたい時は、Mac の音の出口を「外部ヘッドフォン」に戻す。</div>
+
+</details>
+
+<div class="done"><b>終わりの確かめ</b><br>テスト通話の再生に、スライドの音声とあなたの声が両方入る。<br>電源を切ると、録音タブから AG03MK2 が消える。</div>
+
+<details class="trouble"><summary>通した記録</summary>
+<table>
+  <colgroup><col style="width:16%"><col style="width:22%"><col style="width:62%"></colgroup>
+  <thead><tr><th>日</th><th>機械</th><th>通った所・足した物</th></tr></thead>
+  <tbody>
+    <tr><td>11-23</td><td>Mac・AG03MK2・dynabook</td><td>1 回目——手順を作った。<br>Mac mini の穴 → AUX の形で、Teams まで Mac の音が届いた。<br>RØDE の声を通すため、RØDE → AUX の形に洗い直した。</td></tr>
+    <tr><td>11-23</td><td>Mac・RØDE・AG03MK2・dynabook</td><td>2 回目——段 1 から通し直し、段 1〜8 すべて済んだ。<br>最終試験で、解説の声とあなたの声が dynabook のスピーカーから両方聞こえた。<br>電源を切って入れ直しても、Teams のマイクは AG03MK2 に戻った。</td></tr>
+  </tbody>
+</table>
+</details>

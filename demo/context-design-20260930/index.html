@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta name="publish-date" content="2026-09-30">
+<title>コンテキスト設計（試作）</title>
+<meta name="robots" content="noindex">
+<meta name="published" content="2026-11-19 10:24:02">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/前回のおさらい.css">
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 表紙 -->
+<section class="cover">
+  <div class="meta"><span>2026-09-30</span><span>STF社内勉強会 第2弾</span><span>開発チーム向け</span></div>
+  <h1>コンテキスト設計</h1>
+  <p class="muted">何を、どこに書いて渡すか</p>
+</section>
+
+<!-- 2 本日の範囲（0章） -->
+<section>
+  <h2>本日の範囲</h2>
+  <div class="boxes" style="flex-wrap:wrap;row-gap:20px">
+    <div style="flex:1 1 45%"><h3><a href="#3">1 前回のおさらい</a></h3><p>AI の4つの性質・ハーネス・質を決める3つ</p></div>
+    <div style="flex:1 1 45%"><h3><a href="#7">2 何に料金がかかるか</a></h3><p>仕組みと、コストを高くしない3つの習慣</p></div>
+    <div style="flex:1 1 45%"><h3><a href="#12">3 コンテキストの置き場所</a></h3><p>どのファイルに何を書くか</p></div>
+    <div style="flex:1 1 45%"><h3><a href="#18">4 AI 開発環境での管理</a></h3><p>うちの実物。何が、いつ読まれるか</p></div>
+  </div>
+  <p class="muted">この資料はすべて Claude Code を前提にします。ほかの道具でも考え方は同じですが、名前は違います。</p>
+</section>
+
+<!-- 3〜6 前回のおさらい（例外: 前の版をそのまま引用。1920×1080・トンマナの影響を受けない） -->
+<section class="legacy" data-label="第1章" data-screen-label="03" data-speaker-notes="初めての人向けに手短に。前回聞いた人には確認として。" style="position:relative;display:flex;flex-direction:column;padding:54px;background:var(--dark);color:#FFFFFF;font-family:'IBM Plex Sans JP','Noto Sans JP',sans-serif;font-feature-settings:'palt' 1;box-sizing:border-box">
+    <div style="position:absolute;top:20px;left:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:rgba(255,255,255,.6)">FIG. 03</div>
+    <div style="position:absolute;top:20px;right:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:rgba(255,255,255,.6)">REV. 2026-08</div>
+    <div style="position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;border:1px solid rgba(255,255,255,.5);padding:40px 48px;box-sizing:border-box">
+      <div style="position:absolute;top:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:rgba(255,255,255,.5)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:rgba(255,255,255,.5)"></div></div>
+      <div style="position:absolute;top:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:rgba(255,255,255,.5)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:rgba(255,255,255,.5)"></div></div>
+      <div style="position:absolute;bottom:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:rgba(255,255,255,.5)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:rgba(255,255,255,.5)"></div></div>
+      <div style="position:absolute;bottom:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:rgba(255,255,255,.5)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:rgba(255,255,255,.5)"></div></div>
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-small);letter-spacing:.16em;color:rgba(255,255,255,.62)">CHAPTER 1</div>
+    <h2 style="margin:24px 0 0;font-size:96px;font-weight:600;letter-spacing:-.02em;color:#FFFFFF">前回のおさらい</h2>
+    <p style="margin:28px 0 0;font-size:var(--t-sub);color:rgba(255,255,255,.82)">ハーネスと、その中のコンテキスト</p>
+    </div>
+  </section>
+
+<section class="legacy" data-label="AIの限界" data-screen-label="04" data-speaker-notes="第1弾の4ページ目と同じ内容。こういう性質があるから、仕組みで抑える必要があるという話につなぐ。" style="position:relative;display:flex;flex-direction:column;padding:54px;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans JP','Noto Sans JP',sans-serif;font-feature-settings:'palt' 1;box-sizing:border-box">
+    <div style="position:absolute;top:20px;left:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:var(--mut)">FIG. 04</div>
+    <div style="position:absolute;top:20px;right:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:var(--mut)">REV. 2026-08</div>
+    <div style="position:relative;flex:1;display:flex;flex-direction:column;border:1px solid var(--strong);padding:40px 48px;box-sizing:border-box">
+      <div style="position:absolute;top:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;top:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;bottom:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;bottom:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-small);letter-spacing:.14em;color:var(--mut)">01 — 前回のおさらい</div>
+    <h2 style="margin:18px 0 0;font-size:var(--t-title);font-weight:700;letter-spacing:-.01em">AIは、正しい答えを出すとは限らない</h2>
+    <div style="height:1px;background:var(--rule);margin:32px 0 32px"></div>
+    <p style="margin:0 0 32px;font-size:var(--t-body);line-height:1.7;max-width:1600px">任せきりにすると期待どおりに動かないことがあります。理由は、次の4つの性質です。</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:26px">
+      <div style="background:var(--panel);border:1px solid var(--rule);padding:24px 28px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:var(--t-sub);font-weight:500">嘘をつく</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">確かめずに、それらしい答えを作ってしまう。</span>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--rule);padding:24px 28px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:var(--t-sub);font-weight:500">抜ける</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">複数の指示を同時に与えると、一部が漏れる。</span>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--rule);padding:24px 28px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:var(--t-sub);font-weight:500">調べない</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">知らないことを自分からは確認せず、古い知識のまま答える。</span>
+      </div>
+      <div style="background:var(--panel);border:1px solid var(--rule);padding:24px 28px;display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:var(--t-sub);font-weight:500">勝手にやる</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">確認せず、頼んでいない変更まで独断で加える。</span>
+      </div>
+    </div>
+    <p style="margin:22px 0 0;font-size:var(--t-body);line-height:1.7;color:var(--mid);max-width:1650px">これらは使い方の巧拙ではなく、性質です。注意で防ぐのではなく、仕組みで抑えます。</p>
+    <div style="margin:10px 0 0;border-left:8px solid #B5401A;background:#FBF0EC;padding:14px 30px">
+      <div style="font-size:var(--t-small);letter-spacing:.06em;color:#8C3B28">前回は触れていません — 5つめの性質</div>
+      <div style="margin-top:8px;font-size:var(--t-sub);font-weight:600;color:#B5401A">同じことを聞いても、答えが変わる</div>
+      <div style="margin-top:8px;font-size:var(--t-small);line-height:1.55;color:var(--mid);max-width:1650px">AI は<strong style="color:#B5401A">確率モデル</strong>——次の言葉を確率で選ぶ。必ず同じ答えを返すプログラム（<strong>決定論的</strong>）とは、ここが違う。<br><strong style="color:#B5401A">「一度うまくいった」は、次もうまくいく保証にならない。</strong></div>
+    </div>
+    </div>
+  </section>
+
+<section class="legacy" data-label="ハーネス設計" data-screen-label="05" data-speaker-notes="第1弾の5ページ目と同じ内容。ハーネスは馬具の意。今回はこの一覧のうちコンテキスト設計を掘る。" style="position:relative;display:flex;flex-direction:column;padding:54px;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans JP','Noto Sans JP',sans-serif;font-feature-settings:'palt' 1;box-sizing:border-box">
+    <div style="position:absolute;top:20px;left:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:var(--mut)">FIG. 05</div>
+    <div style="position:absolute;top:20px;right:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:var(--mut)">REV. 2026-08</div>
+    <div style="position:relative;flex:1;display:flex;flex-direction:column;border:1px solid var(--strong);padding:22px 48px;box-sizing:border-box">
+      <div style="position:absolute;top:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;top:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;bottom:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;bottom:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-small);letter-spacing:.14em;color:var(--mut)">01 — 前回のおさらい</div>
+    <h2 style="margin:12px 0 0;font-size:var(--t-title);font-weight:700;letter-spacing:-.01em">AIに手綱を。ハーネス設計</h2>
+    <div style="height:1px;background:var(--rule);margin:16px 0 16px"></div>
+    <p style="margin:0 0 10px;font-size:var(--t-body);line-height:1.7;max-width:1680px">前の4つの性質を仕組みで抑えるための道具一式を、まとめて<b>ハーネス（馬具）</b>と呼びます。</p>
+    <div style="flex:1;display:flex;gap:40px;align-items:center;min-height:0">
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;min-width:0"><img src="images/harness_horse_light.webp" alt="馬具をつけた馬" style="width:100%;max-width:780px;height:auto"></div>
+      <div style="width:880px;flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+      <div style="border:1px solid var(--indigo);border-top:4px solid var(--cyan);background:var(--pale);padding:12px 22px;display:flex;flex-direction:column;gap:5px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:var(--t-mono);color:var(--mid)">今回の主題</span>
+        <span style="font-size:var(--t-body);font-weight:500">コンテキスト設計・メモリ</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">何を、どの順で読ませるか。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:14px 24px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:var(--t-body);font-weight:500">スキル</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">作業のやり方を型として渡す。毎回同じ手順で再現できる。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:14px 24px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:var(--t-body);font-weight:500">ガードレール</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">触ってよい範囲と権限を固定する。外には出させない。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:14px 24px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:var(--t-body);font-weight:500">サブエージェント</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">一体に一つの役割だけ持たせる。分けて任せ、判断が混ざらない。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:14px 24px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:var(--t-body);font-weight:500">フック</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">決めた規則を自動で強制する。人の注意力に頼らない。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:14px 24px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:var(--t-body);font-weight:500">ワークフロー</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.6">複数の手順を決まった順で回す。段取りごと型にする。</span>
+      </div>
+      </div>
+    </div>
+    <div style="margin:10px 0 0;border-left:5px solid #B5401A;background:#FBF0EC;padding:7px 20px;font-size:var(--t-mono);line-height:1.5;color:var(--mid)">ハーネスの要素として、この一覧に入っていないものは<strong style="color:#B5401A">ツール</strong>と<strong style="color:#B5401A">MCP サーバー</strong>。<br>AI を制御するための要素からは少し外れるため、ここには挙げていない。</div>
+    </div>
+  </section>
+
+<section class="legacy" data-label="質を決めるもの" data-screen-label="06" data-speaker-notes="前回の締め。質を決めるのはモデル・ハーネス・指示の3つ。モデルが変わればハーネスも指示も形が変わる。テストや既存コードは3つの外ではなく、成果物と指示に分かれる。今日のコンテキストは2番と3番にまたがる別の目線。" style="position:relative;display:flex;flex-direction:column;padding:54px;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans JP','Noto Sans JP',sans-serif;font-feature-settings:'palt' 1;box-sizing:border-box">
+    <div style="position:absolute;top:20px;left:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:var(--mut)">FIG. 06</div>
+    <div style="position:absolute;top:20px;right:54px;font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.16em;color:var(--mut)">REV. 2026-08</div>
+    <div style="position:relative;flex:1;display:flex;flex-direction:column;border:1px solid var(--strong);padding:40px 48px;box-sizing:border-box">
+      <div style="position:absolute;top:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;top:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;bottom:-14px;left:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+      <div style="position:absolute;bottom:-14px;right:-14px;width:28px;height:28px"><div style="position:absolute;top:13px;left:0;width:28px;height:1px;background:var(--strong)"></div><div style="position:absolute;left:13px;top:0;width:1px;height:28px;background:var(--strong)"></div></div>
+
+    <div style="font-family:'JetBrains Mono',monospace;font-size:var(--t-small);letter-spacing:.14em;color:var(--mut)">01 — 前回のおさらい</div>
+    <h2 style="margin:18px 0 0;font-size:var(--t-title);font-weight:700;letter-spacing:-.01em">成果物の質を決めるもの</h2>
+    <p style="margin:16px 0 0;font-size:var(--t-body);color:var(--mid);line-height:1.7">前回はここで終わりました。</p>
+    <div style="height:1px;background:var(--rule);margin:26px 0 30px"></div>
+    <div style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:36px;align-items:stretch">
+      <div style="border:1px solid var(--indigo);border-top:4px solid var(--cyan);background:var(--pale);padding:44px 38px;display:flex;flex-direction:column;gap:24px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:var(--t-mono);color:var(--mid)">01</span>
+        <span style="font-size:var(--t-title);font-weight:600;line-height:1.3">モデル</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.7">いちばん大きい。モデルが良くなれば、それだけで質が上がる。<b>2番・3番の形も変える</b>——賢くなるほど、細かく刻んで渡さなくてよくなる。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:44px 38px;display:flex;flex-direction:column;gap:24px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:var(--t-mono);color:var(--mut)">02</span>
+        <span style="font-size:var(--t-title);font-weight:600;line-height:1.3">ハーネス</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.7">4つの性質を仕組みで抑える道具一式。<b>今日話すコンテキストは、この一部</b>。ただし権限やフックは文章では渡らないので、コンテキストの外。</span>
+      </div>
+      <div style="border:1px solid var(--rule);background:var(--panel);padding:44px 38px;display:flex;flex-direction:column;gap:24px">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:var(--t-mono);color:var(--mut)">03</span>
+        <span style="font-size:var(--t-title);font-weight:600;line-height:1.3">指示</span>
+        <span style="font-size:var(--t-small);color:var(--mid);line-height:1.7">仕様、途中のやり取りで決めたこと、そして<b>何をもって出来上がりとするか</b>。<b>今日話すコンテキストは、ここにもまたがる</b>。</span>
+      </div>
+    </div>
+    <p style="margin:30px 0 0;font-size:var(--t-body);line-height:1.7">今日の「コンテキスト」は、この3つのどれか1つではなく、<b>2番と3番にまたがる別の目線</b>。</p>
+    </div>
+  </section>
+
+<!-- 7 章扉 2 -->
+<section class="divider">
+  <div class="num">CHAPTER 2</div>
+  <h1>何に料金がかかるか</h1>
+  <div class="rule"></div>
+  <p class="muted">料金は、読ませた量で決まります。</p>
+</section>
+
+<!-- 8 2-1 -->
+<section>
+  <div class="chap">2 何に料金がかかるか</div>
+  <h2>AI は前の発言を覚えていない。毎回、全部を渡している</h2>
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <p>毎回のやり取りで、この4つをまとめて渡し直している。</p>
+    <ul style="gap:2px">
+      <li>システムの前置きと道具の定義</li>
+      <li>CLAUDE.md とスキルの一覧</li>
+      <li>そのとき開いた参照ドキュメント・規則・読んだコード</li>
+      <li><strong>最初から最後までの会話履歴、全部</strong></li>
+    </ul>
+  </div>
+  <figure style="align-items:stretch">
+    <img src="images/入力_出力_すべて忘れる_3コマ_横長_v5.webp" alt="1 入力: すべての履歴を最初から読む／2 出力: 正確な答え／3 すべて忘れる" style="width:100%;object-fit:contain">
+  </figure>
+</section>
+
+<!-- 9 図: 積み上がる -->
+<section>
+  <div class="chap">2 何に料金がかかるか</div>
+  <h2>会話が伸びるほど、運ぶ山が高くなる</h2>
+  <div class="cols" style="align-items:center;gap:28px">
+    <div style="flex:1.15">
+      <figure>
+        <img src="images/毎回ぜんぶ読み直している.svg" alt="1回目・10回目・30回目で、毎回運ぶ量が増えていく図">
+      </figure>
+    </div>
+    <div>
+      <table class="small" style="white-space:nowrap">
+        <tr><th></th><th>常時分</th><th>会話履歴</th><th>1回あたりの入力</th></tr>
+        <tr><td><strong>1ターン目</strong></td><td>3万7千</td><td>4千</td><td><strong>4万1千</strong></td></tr>
+        <tr><td><strong>10ターン目</strong></td><td>3万7千</td><td>4万2千</td><td><strong>7万9千</strong></td></tr>
+        <tr><td><strong>30ターン目</strong></td><td>3万7千</td><td>12万</td><td><strong>15万7千</strong></td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="band" style="margin-top:20px;font-size:20px"><strong>補足——コンテキストに関するコマンド</strong>（Claude Code の場合）</p>
+  <ul class="notes">
+    <li><code>/context</code>　<strong>いま何にどれだけ使っているかを色分けの図で見せる。</strong>まずこれで、太っている場所を確かめる</li>
+    <li><code>/clear</code>　会話を空にして始め直す。<strong>いちばん軽くなる。</strong>CLAUDE.md などの決めは残る（前の会話は <code>/resume</code> で戻せる）</li>
+    <li><code>/compact</code>　会話を<strong>要約して詰める</strong>。同じ会話を続けたいときはこちら。<code>/compact &lt;残したいこと&gt;</code> と書き足せる</li>
+    <li><code>/rewind</code>　<strong>コードと会話を、前の地点まで巻き戻す</strong>。行き止まりに入ったとき、そこまで戻ってやり直せる</li>
+  </ul>
+</section>
+
+<!-- 10 2-2 -->
+<section class="dense">
+  <div class="chap">2 何に料金がかかるか</div>
+  <h2>モデルの価格表（$ / 100万トークン・2026-10-01 現在）</h2>
+  <table class="xtight">
+    <colgroup><col style="width:214px"><col style="width:66px"><col style="width:66px"><col style="width:132px"><col style="width:100px"><col style="width:116px"><col></colgroup>
+    <tr><th>モデル</th><th>入力</th><th>出力</th><th>キャッシュ読み</th><th>書き 5分</th><th>書き 1時間</th><th>備考</th></tr>
+    <tr><td>Claude Haiku 4.5</td><td>$1</td><td>$5</td><td>$0.10</td><td>$1.25</td><td>$2</td><td>いちばん軽い。定型の作業向き</td></tr>
+    <tr><td><strong class="good">Claude Sonnet 5.5</strong></td><td>$2</td><td>$10</td><td>$0.20</td><td>$2.50</td><td>$4</td><td>普段づかいの中心。Sonnet 5 と同額</td></tr>
+    <tr><td>Claude Sonnet 5</td><td>$2</td><td>$10</td><td>$0.20</td><td>$2.50</td><td>$4</td><td></td></tr>
+    <tr><td><strong class="good">Claude Opus 5.5</strong></td><td>$4</td><td>$20</td><td>$0.20</td><td>$5</td><td>$8</td><td>Opus 5 より安い。読みは入力の20分の1</td></tr>
+    <tr><td><strong>Claude Opus 5（既定）</strong></td><td>$5</td><td>$25</td><td>$0.50</td><td>$6.25</td><td>$10</td><td></td></tr>
+    <tr><td>Claude Opus 4.8（旧）</td><td>$5</td><td>$25</td><td>$0.50</td><td>$6.25</td><td>$10</td><td>Opus 5 と同額</td></tr>
+    <tr><td><strong class="good">Claude Fable 5.1</strong></td><td>$10</td><td>$50</td><td>$0.25</td><td>$12.50</td><td>$20</td><td>最上位。読みは入力の40分の1</td></tr>
+    <tr><td>Claude Fable 5</td><td>$10</td><td>$50</td><td>$1</td><td>$12.50</td><td>$20</td><td></td></tr>
+    <tr><td><strong class="good">GPT-6 luna</strong></td><td>$0.10</td><td>$0.50</td><td>$0.01</td><td colspan="2">$0.125</td><td>いちばん安い</td></tr>
+    <tr><td>GPT-5.6 luna</td><td>$0.20</td><td>$1.20</td><td>$0.02</td><td colspan="2">$0.25</td><td></td></tr>
+    <tr><td>GPT-5.6 terra</td><td>$2</td><td>$12</td><td>$0.20</td><td colspan="2">$2.50</td><td></td></tr>
+    <tr><td><strong class="good">GPT-6.1 sol</strong></td><td>$2</td><td>$10</td><td>$0.10</td><td colspan="2">$2.50</td><td>9月29日に出た。読みは入力の20分の1</td></tr>
+    <tr><td><strong class="good">GPT-6 sol</strong></td><td>$2</td><td>$10</td><td>$0.20</td><td colspan="2">$2.50</td><td></td></tr>
+    <tr><td>GPT-5.6 sol</td><td>$4</td><td>$20</td><td>$0.40</td><td colspan="2">$5</td><td></td></tr>
+    <tr><td>GPT-5.5（旧）</td><td>$5</td><td>$30</td><td>$0.50</td><td colspan="2">割増なし（入力と同額）</td><td></td></tr>
+    <tr><td><strong class="good">GPT-6 astra</strong></td><td>$10</td><td>$50</td><td>$1</td><td colspan="2">$12.50</td><td>GPT の最上位</td></tr>
+  </table>
+  <ul class="notes">
+    <li><strong class="good">緑</strong>＝8月27日の表に無かったモデル。（旧）＝一つ前の世代。読み＝使い回せた部分の単価・書き＝初回に入れるときの単価（説明は次の枚）。GPT は 5分／1時間の区別なし</li>
+    <li><strong class="hot">注意</strong>　表の値は<strong>単価</strong>。これとは別に<strong>1回に渡すコンテキストの量</strong>でも変わる——GPT-5.6・6 系は <strong>272K を超える</strong>とそのリクエスト全体が<strong class="hot">入力2倍・出力1.5倍</strong>。<br>　　　　Claude 4.6 以降は 1M まで同じ単価</li>
+  </ul>
+</section>
+
+<!-- 11 2-3 -->
+<section>
+  <div class="chap">2 何に料金がかかるか</div>
+  <h2>コストを高くしない、3つの習慣</h2>
+  <div class="boxes">
+    <div style="padding:16px 22px"><h3>セッションを変える</h3><p style="line-height:1.5">用が済んだら新しい会話へ。<strong>いちばん効く。</strong>しかもタダで、今日からできる。<br>長い会話は、値段だけでなく精度も薄まる</p></div>
+    <div style="padding:16px 22px"><h3>読ませるものを減らす</h3><p style="line-height:1.5">CLAUDE.md・スキルの前書き一覧・繋いだ道具の定義。<br>ここは会話の中身に関係なく、<strong>毎ターン課金される</strong></p></div>
+    <div style="padding:16px 22px"><h3>途中で変えない</h3><p style="line-height:1.5">モデルとエフォートを途中で替えると<strong>キャッシュが外れて</strong>、前置きの料金が10分の1から元に戻る。<br>毎回変わるもの（今日の日付など）を前置きの先頭に置かないのも同じ理由</p></div>
+  </div>
+  <p class="band" style="font-size:19px;line-height:1.6;margin-bottom:6px"><strong>キャッシュとは</strong>　同じ前置きを続けて送ると、向こうが前回の計算結果を使い回す仕組み。<br>使い回せた部分は<strong>入力の10分の1</strong>（Opus 5.5 は20分の1・Fable 5.1 は40分の1）。</p>
+  <ul class="notes">
+    <li><strong>初回にキャッシュへ入れるときだけ、値段が変わる。</strong>Claude は入力の <strong>1.25倍</strong>（1時間もたせるなら<strong>入力の2倍</strong>）、<strong>GPT は 5.6 から 1.25倍</strong>——5.5 までは <strong>1倍</strong>（割増なし）</li>
+    <li><strong>この割増が請求にどれだけ効くかを、いちばん影響の大きい GPT-5.6 Sol で見る</strong>（2026年10月1日現在）。入力は100万トークンあたり 4.00ドル</li>
+    <li>置いた条件——入力100万トークンのうち <strong>20万トークンがキャッシュに乗る</strong>（多めの見積り）。<strong>5.5 との差は書き込みの割増だけ</strong>で、読みが1割になる仕組みは 5.5 にもある</li>
+    <li>割増は20万トークンぶんで <strong>0.20ドル</strong>。<strong>初回の1回きり</strong>で、2回目からはかからない</li>
+    <li>1回で終われば 4.00ドルが <strong>4.20ドル</strong>、20ターン使い回せば1ターンあたり0.01ドルで <strong>4.01ドル</strong>——<strong>多めに見積もって1セントの値上げ</strong>。同じ100万トークンを 5.5 で送ると <strong>5.00ドル</strong></li>
+  </ul>
+</section>
+
+<!-- 12 章扉 3 -->
+<section class="divider">
+  <div class="num">CHAPTER 3</div>
+  <h1>コンテキストの置き場所</h1>
+  <div class="rule"></div>
+  <p class="muted">同じ内容でも、どこに置くかで、かかる料金が変わります。</p>
+</section>
+
+<!-- 13 3-1 -->
+<section>
+  <div class="chap">3 コンテキストの置き場所</div>
+  <h2>コンテキストは、一つのファイルのことではない</h2>
+  <div class="boxes">
+    <div><h3>常時</h3><p>毎ターン乗る<br>CLAUDE.md ／ スキルの前書き一覧 ／ エージェントの定義</p></div>
+    <div><h3>都度</h3><p>そのときだけ乗る<br>今回の依頼と会話 ／ 参照ドキュメント ／ 読んだコードや出力</p></div>
+    <div><h3>条件つき</h3><p>要るときだけ<br>メモリ ／ 機構が自動で差し込む確認結果</p></div>
+  </div>
+  <p class="muted">置き場所は、<strong>どこまで効かせたいか</strong>で決まる。<br>全プロジェクトで守る決めはホーム側、このリポジトリだけの前提はリポジトリ側。</p>
+</section>
+
+<!-- 14 図: 常時と都度 -->
+<section>
+  <div class="chap">3 コンテキストの置き場所</div>
+  <h2>常時置くか、その都度置くか</h2>
+  <figure>
+    <img src="images/常時と都度.svg" alt="常時は毎ターン乗る・都度はそのときだけ乗る、を並べた図">
+  </figure>
+</section>
+
+<!-- 15 3-2 -->
+<section>
+  <div class="chap">3 コンテキストの置き場所</div>
+  <h2>CLAUDE.md がいちばん太りやすい</h2>
+  <p class="muted" style="font-size:20px;margin-top:-4px">一部では<strong>「憲法ファイル」</strong>と呼ばれる。広まった言い方ではないが、<strong>それくらい全体を縛る1枚</strong>。</p>
+  <div class="boxes">
+    <div><h3 class="good">書くこと</h3><p>前提と用語<br>禁止事項と必ず守る規約<br>ディレクトリの地図<br>詳しい文書への入口</p></div>
+    <div><h3 class="hot">置かないもの → 行き先</h3><p>一度しか使わない手順 → <strong>スキル</strong><br>長い仕様や API の一覧 → <strong>参照ドキュメント</strong><br>議事録や経緯 → 決定事項だけを一行に</p></div>
+  </div>
+  <p class="muted">落とし穴——<code>@</code> で取り込むと全文が貼られます。パスだけ書いて「必要になったら読んで」に。<br><strong class="hot">書いたから守られる、ではない。</strong>あれもこれも書くと、<strong>本当に守らせたいものが埋もれる。</strong></p>
+  <p class="band" style="margin-top:22px;font-size:28px"><strong class="hot">AI の注意力は有限。コンテキストが大きくても、すべてが守られるわけではない。</strong></p>
+</section>
+
+<!-- 16 3-3 -->
+<section>
+  <div class="chap">3 コンテキストの置き場所</div>
+  <h2>スキルは、薄い手順書に分けたもの</h2>
+  <div class="boxes">
+    <div><h3 class="hot">前書き（name と description）</h3><p>常に読まれる。数が増えるほど毎ターン効いてくる。<br><strong>使わないスキルを置きっぱなしにしない</strong></p></div>
+    <div><h3>本体</h3><p>起動したときだけ読まれる。ただし以後もずっと乗り続ける。<br><strong>目安は500行以内</strong></p></div>
+  </div>
+  <p class="muted">説明文は「何ができるか」ではなく<strong>起動条件</strong>を書く場所。実際の言われ方をそのまま入れる。</p>
+  <p class="muted" style="margin-top:56px"><strong>スキルについては非常に重要な概念ですので、機会があれば別の回で詳しく述べたいと思います。</strong></p>
+</section>
+
+<!-- 17 図: 分けて棚に置く（3-2・3-3） -->
+<section>
+  <div class="chap">3 コンテキストの置き場所</div>
+  <h2>すべてのコンテキストを常時載せない</h2>
+  <div class="cols" style="align-items:center;gap:32px">
+    <div style="flex:1">
+      <ul style="gap:14px">
+        <li style="font-size:22px;line-height:1.55"><strong>分ける</strong>——一度しか使わない手順は<strong>スキル</strong>、<br>長い規則や仕様は<strong>参照ドキュメント</strong>へ</li>
+        <li style="font-size:22px;line-height:1.55"><strong>棚に置く</strong>——切り出した先は <code>docs/</code> のまま。<br><strong>CLAUDE.md には貼らない</strong></li>
+        <li style="font-size:22px;line-height:1.55"><strong>必要なとき、必要な分だけ</strong><br>——残すのは1行だけ。<br>「開発方針は <code style="font-size:.64em">docs/rules/development-policy-common.md</code>」
+          <p class="muted" style="font-size:19px;line-height:1.55;margin-top:6px"><strong>読むかどうかは、その作業のときに決まる。</strong><br>その規則が要るときだけ読まれ、費用もそのぶん。<br><strong>関係ない作業のときは、いっさいかからない。</strong></p>
+        </li>
+      </ul>
+      <p class="muted" style="font-size:20px;line-height:1.6;margin-top:16px"><strong class="good">これはコンテキストの話だけではない。</strong><br>スキルやサブエージェントなどにも通じる考え方。</p>
+    </div>
+    <div style="flex:1.3">
+      <figure>
+        <img src="images/分けて棚に置く.webp" alt="机に全部積んでさがす人と、棚から要る1枚だけ取り出す人">
+        <figcaption><strong>分ける → 棚に置く → 必要なとき、必要な分だけ</strong></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 18 章扉 4 -->
+<section class="divider">
+  <div class="num">CHAPTER 4</div>
+  <h1>AI 開発環境での管理</h1>
+  <div class="rule"></div>
+  <p class="muted">うちの環境の実物。どのコンテキストが、いつ読まれるか。</p>
+</section>
+
+<!-- 19 4-1 -->
+<section>
+  <div class="chap">4 AI 開発環境での管理</div>
+  <h2>前提——コンテキストは3か所に置かれている</h2>
+  <div class="boxes">
+    <div>
+      <h3>ホーム</h3>
+      <p><code>~/.claude/</code><br><strong>環境全体の決め。</strong>どのプロジェクトで作業していても効く。<br>ここに置くと<strong>全プロジェクトに効く</strong></p>
+    </div>
+    <div>
+      <h3 class="good">テンプレート（原本）</h3>
+      <p><code>~/REPOS/_template/</code><br><strong>横断ルールの正本はここ1つだけ。</strong><br>CLAUDE.md・AGENTS.md・<code>docs/rules/</code> の原本</p>
+    </div>
+    <div>
+      <h3>各リポジトリ</h3>
+      <p><code>~/REPOS/&lt;名前&gt;/</code><br><strong>原本のコピーが配られる。</strong>だから<strong>どのリポジトリでも中身は同じ</strong>。<br>加えて、その物だけの設計文書を持つ</p>
+    </div>
+  </div>
+  <p class="muted"><strong>配布は機械（fleet）がやる。</strong>版を刻んで、全リポジトリのコピーを原本にそろえる。<br><strong>人が直すのは原本だけ。</strong><br>コピーを直すと、次の配布で上書きされるか、配布されずに食い違ったまま残る——どちらも事故。</p>
+</section>
+
+<!-- 20 4-2 -->
+<section>
+  <div class="chap">4 AI 開発環境での管理</div>
+  <h2>常時読まれるコンテキスト</h2>
+  <table>
+    <colgroup><col style="width:310px"><col><col style="width:220px"></colgroup>
+    <tr><th>ファイル</th><th>何が書いてあるか</th><th>いつ読まれるか</th></tr>
+    <tr><td><code>~/.claude/CLAUDE.md</code></td><td><strong>全プロジェクトで守る決め</strong>。開発の方法論、応答のしかた、質問と決定の規則、破壊と書き込みの鉄則</td><td class="hot">常時<br>（全プロジェクト）</td></tr>
+    <tr><td><code>CLAUDE.md</code><br>（プロジェクト）</td><td>このリポジトリの前提。WHY／WHAT／<strong>開発フローの10段</strong>／運用ルール／開発コマンド</td><td class="hot">常時<br>（このリポジトリ）</td></tr>
+    <tr><td><code>AGENTS.md</code></td><td><strong>別の AI（Codex）にレビューさせるための指示書</strong>。正本の在りか、レビューアの役</td><td class="good" style="white-space:nowrap">Codex だけが読む</td></tr>
+  </table>
+  <p class="muted"><strong>Claude は AGENTS.md を開かない。Codex は CLAUDE.md を読まない。</strong><br>1枚に混ぜると、両方に効かない文書になる。<br><strong>前提</strong>——ホーム側は<strong>環境全体の決め</strong>。リポジトリ側の <code>CLAUDE.md</code> と <code>AGENTS.md</code> は<strong>テンプレートに原本が1つ</strong>あり、<br><strong>そこからコピーされて全リポジトリへ同じものが配られる。</strong></p>
+</section>
+
+<!-- 21 4-3 -->
+<section>
+  <div class="chap">4 AI 開発環境での管理</div>
+  <h2>その都度読まれるコンテキスト（横断の規則）</h2>
+  <table class="small">
+    <colgroup><col style="width:340px"><col></colgroup>
+    <tr><th>ファイル</th><th>何の決めか</th></tr>
+    <tr><td><code>development-policy-base.md</code></td><td>開発方針（<strong>基盤</strong>）</td></tr>
+    <tr><td><code>development-policy-common.md</code></td><td>開発方針（<strong>共通ルーチン</strong>）</td></tr>
+    <tr><td><code>development-policy-script.md</code></td><td>開発方針（<strong>スクリプト</strong>）</td></tr>
+    <tr><td><code>development-policy-part.md</code></td><td>開発方針（<strong>部品</strong>）</td></tr>
+    <tr><td><code>interface.md</code></td><td>契約の書き方。design-concept に「インターフェース」の節を必ず持つ</td></tr>
+    <tr><td><code>perl-coding.md</code></td><td>Perl の実装規約</td></tr>
+    <tr><td><code>red-flags.md</code></td><td>失敗の受付箱。失敗が起きたら、まず draft を疑う</td></tr>
+    <tr><td><code>terms.md</code></td><td>用語の正本。同じ語を他所で再定義しない</td></tr>
+  </table>
+  <ul class="notes">
+    <li><strong>配布</strong>　原本はテンプレート（<code>~/REPOS/_template/docs/rules/</code>）に1枚だけ。機械が版を刻んで全リポジトリへ配るので、どのリポジトリでも中身は同じ。<br>　　　　<strong>人が直すのは原本だけ</strong>——コピーを直すと、次の配布で上書きされるか、食い違ったまま残る</li>
+    <li><strong>都度の工夫 1</strong>　開発方針は4枚あるが、<strong>そのリポジトリの種別に当たる1枚だけを開く</strong>。他の3枚は開かない（他種別の記述で指摘すると、成果物の作り方を取り違える）</li>
+    <li><strong>都度の工夫 2</strong>　<strong>レビューアは <code>terms.md</code> を開かない</strong>。用語はレビューの対象ではなく、読めば必ず何か指摘が出る——読まないことが担保になる</li>
+  </ul>
+</section>
+
+<!-- 22 4-4 -->
+<section>
+  <div class="chap">4 AI 開発環境での管理</div>
+  <h2>プロジェクトごとの設計文書</h2>
+  <table class="small">
+    <colgroup><col style="width:260px"><col><col style="width:240px"></colgroup>
+    <tr><th>ファイル</th><th>何か</th><th>いつ読まれるか</th></tr>
+    <tr><td><code>docs/draft.md</code></td><td><strong>仕様の正本</strong>。全仕様の番号付き列挙・恒久</td><td><strong>実装が読むのはこれ</strong></td></tr>
+    <tr><td><code>docs/design-concept.md</code></td><td><strong>外部設計書</strong>（人間用）。背景・外部IF・出力契約。<strong>課題の台帳もここ</strong></td><td>設計と課題を見るとき</td></tr>
+    <tr><td><code>docs/spec.md</code></td><td>内部設計書。モジュール分割・関数契約</td><td class="good">常時読み込みはしない<br>（2026-08-16 にやめた）</td></tr>
+    <tr><td><code>docs/test.md</code> ／ <code>README.md</code></td><td>テストの設計／リポジトリの入口</td><td>要るときに開く</td></tr>
+  </table>
+  <p class="muted"><strong>2026-08-16、コンセプトの整理に伴い <code>spec.md</code> を常時読み込みから外した。</strong>役目が <code>draft.md</code> へ移り、常に読ませる必要がなくなった。<br>書き込みの入口も絞ってある——<strong>どこからでも書けると、中身が食い違って正本にならない。</strong></p>
+</section>
+
+<!-- 23 4-5 -->
+<section>
+  <div class="chap">4 AI 開発環境での管理</div>
+  <h2>design-concept を常時のコンテキストから外す（予定）</h2>
+  <div class="boxes">
+    <div>
+      <h3 class="hot">いまの問題</h3>
+      <p>design-concept には課題（To Do）も、<strong>なぜこう決めたかの経緯</strong>も積まれる。<br><strong>設計書なのに、太り続ける。</strong></p>
+    </div>
+    <div>
+      <h3>やること</h3>
+      <p><strong>課題を専用の台帳へ移す。</strong><br>設計書と課題は別物——設計書は<strong>何を作るか</strong>、課題は<strong>何をやるか</strong>。</p>
+    </div>
+    <div>
+      <h3 class="good">行き着く先</h3>
+      <p>設計が固まったら、<strong>実装は draft だけを見る。</strong><br>design-concept は<strong>開かない</strong>。</p>
+    </div>
+  </div>
+  <p class="muted">設計を変えるときだけ design-concept を開く。そのとき経緯も残る——<br><strong>それ以外のときは、常時のコンテキストに乗せない。</strong><br>課題の台帳化は、そこへ至る一手。</p>
+</section>
+
+<!-- 24 まとめ -->
+<section class="dense">
+  <h2>まとめ——これだけでも覚えて帰って</h2>
+  <table class="small">
+    <colgroup><col style="width:104px"><col><col style="width:150px"></colgroup>
+    <tr><th>ページ</th><th>覚えておくこと</th><th>対象者</th></tr>
+    <tr><td><a href="#4">4</a></td><td><strong>AI は、正しい答えを出すとは限らない。</strong><br>嘘をつく・抜ける・調べない・勝手にやる。さらに、同じことを聞いても答えが変わる（確率モデル）</td><td>全員</td></tr>
+    <tr><td><a href="#8">8</a></td><td><strong>AI は前の発言を覚えていない。毎回、全部を渡している。</strong>だからコンテキストが要になる</td><td>全員</td></tr>
+    <tr><td><a href="#11">11</a></td><td><strong>コストを高くしない3つの習慣。</strong>セッションを変える／読ませるものを減らす／途中で変えない</td><td>全員</td></tr>
+    <tr><td><a href="#15">15</a></td><td><strong>CLAUDE.md がいちばん太りやすい。</strong>AI の注意力は有限。だからコンテキストを絞る</td><td>設計する人</td></tr>
+    <tr><td><a href="#17">17</a></td><td><strong>すべてのコンテキストを常時載せない。</strong>分ける → 棚に置く → 必要なとき、必要な分だけ</td><td>設計する人</td></tr>
+    <tr><td style="white-space:nowrap"><a href="#19">19</a>〜<a href="#22">22</a></td><td><strong>AI 開発環境での管理。</strong>AI 開発環境でのコンテキスト構成を理解する</td><td>設計する人<br>管理する人</td></tr>
+  </table>
+  <ul class="muted" style="margin-top:4px;padding-left:1.3em;gap:2px;font-size:17px;line-height:1.45;list-style:disc">
+    <li style="font-size:18px;line-height:1.5"><strong>プロンプトエンジニアリングから、コンテキスト設計へ</strong></li>
+    <li style="font-size:18px;line-height:1.5"><strong>今日触れなかった仕組み</strong>——パス指定のルール、入れ子の CLAUDE.md、オートメモリ</li>
+    <li style="font-size:18px;line-height:1.5"><strong>研究テーマ</strong>——長期記憶、ドリーミング、グラフメモリ</li>
+  </ul>
+</section>
+
+</div>
+<div class="pageno" id="pageno"></div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
